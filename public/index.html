@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PostGIS Preview</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+  <style>
+     html, body, #container {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+    body {
+      padding-top: 50px;
+    }
+    #map, #table {
+      width: auto;
+      height: 100%;
+      box-shadow: 0 0 10px rgba(0,0,0,0.55);
+    }
+    #sidebar {
+      width: 300px;
+      height: 100%;
+      max-width: 100%;
+      float: right;
+      -webkit-transition: all 0.25s ease-out;
+      -moz-transition: all 0.25s ease-out;
+      transition: all 0.25s ease-out;
+    }
+    .navbar .navbar-brand {
+      font-weight: bold;
+      font-size: 25px;
+      color: #FFFFFF;
+    }
+    .navbar {
+      background-image: linear-gradient(to bottom, #2b6988 0%, #1f4b61 100%);
+    }
+    .navbar-inverse .navbar-nav>li>a {
+      color: #fff;
+    }
+
+    #sidebar textarea {
+      margin-bottom: 15px;
+    }
+
+    #sidebar .btn {
+      margin-right: 15px;
+    }
+
+    .navbar .btn-group {
+      margin-right:0;
+    }
+
+    #notifications {
+      margin-left: 10px;
+    }
+
+  </style>
+</head>
+ <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">PostGIS Preview</a>
+
+        </div>
+        <div class="btn-group navbar-right" role="group" aria-label="...">
+          <button type="button" class="btn btn-info navbar-btn active">Map View</button>
+          <button type="button" class="btn btn-info navbar-btn">Data View</button>
+        </div>
+     
+      </div>
+    </div>
+
+    <div id="container">
+      <div id="sidebar">
+        <form>
+          <div class="form-horizontal">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <textarea id="sqlPane" class="form-control" rows="15" placeholder="Type your SQL" required></textarea>
+                    <input id="run" type="submit" class="btn btn-info pull-right" href="#">
+                </div>
+            </div>
+          </div>
+          <div id="notifications"></div>
+        </form>
+      </div>
+      <div id="map">
+      </div>
+      <div id="table">
+      Table
+      </div>
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/chroma-js/0.5.9/chroma.min.js"></script>
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>  
+  <script src="http://d3js.org/topojson.v1.min.js"></script>
+  <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+  <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
+  <script>
+    (function(){
+    'use strict'
+      
+      //initialize a leaflet map
+      var map = L.map('map')
+        .setView([40.708816,-74.008799], 11);
+      
+      //layer will be where we store the L.geoJSON we'll be drawing on the map
+      var layer;
+
+      //add CartoDB 'dark matter' basemap
+      L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+      }).addTo(map);
+
+      //listen for submit of new query
+      $('form').submit(function(e) {
+        e.preventDefault();
+
+        var sql = $('#sqlPane').val();
+        
+        //clear the map
+        if( map.hasLayer(layer)) {
+          layer.clearLayers();
+        }
+      
+        //pass the query to the sql api endpoint
+        $.getJSON('/sql?q=' + sql, function(data) {
+          console.log(data)
+          if(!data.error) {
+            //convert topojson coming over the wire to geojson using mapbox omnivore
+            var geojson = omnivore.topojson.parse(data);
+            console.log(geojson)
+            //create an L.geoJson layer, add it to the map
+            layer = L.geoJson(geojson, {
+              style: {
+                  color: '#fff', // border color
+                  fillColor: 'steelblue',
+                  weight: 1,
+                  opacity: 1,
+                  fillOpacity: 0.7
+              },
+
+              pointToLayer: function (feature, latlng) {
+                return L.circleMarker(latlng, {
+                  radius: 4,
+                  fillColor: "#ff7800",
+                  color: "#000",
+                  weight: 1,
+                  opacity: 1,
+                  fillOpacity: 0.8
+                });
+              }
+            }).addTo(map)
+
+            // map.fitBounds(layer.getBounds());
+
+
+          } else {
+            //write the error in the sidebar
+            $('#notifications').text(data.error)
+          }
+        })
+      })
+
+      //toggle map and data view
+      $('.btn-group button').click(function(e) {
+        $(this).addClass('active').siblings().removeClass('active');
+
+        var view = $(this)[0].innerText;
+
+        if(view == "Data View") {
+          $('#map').hide();
+          $('#table').show();
+        } else {
+          $('#map').show();
+          $('#table').hide();
+        }
+
+      })
+    }());
+  </script>
+</body>
+</html>
