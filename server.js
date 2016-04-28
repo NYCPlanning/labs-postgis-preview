@@ -40,9 +40,10 @@ app.get('/sql', function(req, res){
       });
     })
     .catch(function(err) { //send the error message if the query didn't work
-      console.log("myerr", err.message)
+      var msg = err.message || err;
+      console.log("myerr", msg)
       res.send({
-        error: err.message
+        error: msg
       });
     });
 });
