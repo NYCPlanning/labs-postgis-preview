@@ -1,5 +1,5 @@
 #PostGIS Preview
-A lightweight node api and frontend for quicky previewing PostGIS queries.
+A lightweight node api and frontend for quicky previewing PostGIS queries. _Pull Requests Welcomed!_  See TODOs below, real issues coming shortly.
 
 ![preview](https://cloud.githubusercontent.com/assets/1833820/14897977/7e8088cc-0d52-11e6-9c0e-b56f3b2af954.gif)
 
