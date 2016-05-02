@@ -1,0 +1,55 @@
+    html, body, #container {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+    body {
+      padding-top: 50px;
+    }
+    #map, #table {
+      width: auto;
+      height: 100%;
+      box-shadow: 0 0 10px rgba(0,0,0,0.55);
+    }
+    #sidebar {
+      width: 300px;
+      height: 100%;
+      max-width: 100%;
+      float: right;
+      -webkit-transition: all 0.25s ease-out;
+      -moz-transition: all 0.25s ease-out;
+      transition: all 0.25s ease-out;
+    }
+    .navbar .navbar-brand {
+      font-weight: bold;
+      font-size: 25px;
+      color: #FFFFFF;
+    }
+    .navbar {
+      background-image: linear-gradient(to bottom, #2b6988 0%, #1f4b61 100%);
+    }
+    .navbar-inverse .navbar-nav>li>a {
+      color: #fff;
+    }
+
+    #sidebar textarea {
+      margin-bottom: 15px;
+    }
+
+    #sidebar .btn {
+      margin-right: 15px;
+    }
+
+    .navbar .btn-group {
+      margin-right:0;
+    }
+
+    #notifications {
+      margin-left: 10px;
+    }
+
+    #table {
+      position: absolute;
+      padding: 18px;
+    }
+

@@ -13,7 +13,6 @@
   };
 
   dbgeo.parse = function(params, callback) {
-    console.log('parse')
     if (!(params.callback || callback)) {
       throw new Error("You must provide a callback function", null);
     }
