@@ -10,6 +10,8 @@
       width: auto;
       height: 100%;
       box-shadow: 0 0 10px rgba(0,0,0,0.55);
+      position: relative;
+      display: block;
     }
     #sidebar {
       width: 300px;
@@ -49,7 +51,31 @@
     }
 
     #table {
-      position: absolute;
-      padding: 18px;
+      margin-right: 300px;
     }
+
+    .dataTables_wrapper {
+      padding-top:15px;
+      height: 100%;
+      overflow: scroll;
+    }
+
+    .dataTables_wrapper .row {
+      margin: 0;
+    }
+
+    .dataTables_wrapper .row:after {
+      clear: inherit;
+    }
+
+    .dataTables_wrapper .col-sm-12 {
+      padding:0;
+      margin: 0;
+    }
+
+
+
+  
+ 
+  
 

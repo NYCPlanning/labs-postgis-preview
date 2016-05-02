@@ -92,8 +92,12 @@
         //first build the header row
         var fields = Object.keys( features[0].properties );
 
+        $('#table').find('thead').append('<tr/>');
+        $('#table').find('tfoot').append('<tr/>');
+
         fields.forEach( function( field ) {
-          $('#table').find('tr').append('<th>' + field + '</th>')
+          $('#table').find('thead').find('tr').append('<th>' + field + '</th>');
+          $('#table').find('tfoot').find('tr').append('<th>' + field + '</th>')
         });
 
         features.forEach( function( feature ) {
@@ -115,7 +119,8 @@
       }
 
       function clearTable() {
-        $('#table').find('tr').empty();
+        $('#table').find('thead').empty();
+        $('#table').find('tfoot').empty();
         $('#table').find('tbody').empty();
       };
 
