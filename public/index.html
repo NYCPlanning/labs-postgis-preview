@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
   <link rel="stylesheet" href="//cdn.datatables.net/1.10.11/css/dataTables.bootstrap.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
   <link rel="stylesheet" href="./css/styles.css">
 </head>
  <body>
@@ -21,7 +22,7 @@
           <button type="button" class="btn btn-info navbar-btn active">Map View</button>
           <button type="button" class="btn btn-info navbar-btn">Data View</button>
         </div>
-     
+
       </div>
     </div>
 
@@ -31,9 +32,24 @@
           <div class="form-horizontal">
             <div class="form-group">
                 <div class="col-md-12">
-                    <textarea id="sqlPane" class="form-control" rows="15" placeholder="Type your SQL" required></textarea>
+                    <textarea id="sqlPane" class="form-control" rows="15" placeholder="Type your SQL" required onkeyup="getText()"></textarea>
                     <input id="run" type="submit" class="btn btn-info pull-right" href="#">
                 </div>
+  <div class="col-md-12"><pre><code class="sql" id="foo"></code></pre></div>
+<script>
+
+function getText(){
+var sql = document.getElementById("sqlPane").value;
+document.getElementById("foo").innerHTML=sql;
+
+hljs.initHighlighting.called = false;
+hljs.initHighlighting();
+
+}
+
+</script>
+
+
             </div>
           </div>
           <div id="notifications"></div>
@@ -50,18 +66,20 @@
 
         </tfoot>
         <tbody>
-           
+
         </tbody>
     </table>
       </div>
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/chroma-js/0.5.9/chroma.min.js"></script>
-  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>  
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="http://d3js.org/topojson.v1.min.js"></script>
   <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
   <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
   <script src="//cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
   <script src="//cdn.datatables.net/1.10.11/js/dataTables.bootstrap.min.js"></script>
   <script src="./js/script.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
 </body>
 </html>
