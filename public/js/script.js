@@ -58,6 +58,25 @@
 
       })
 
+      function propertiesTable( properties ) {
+        if (!properties) {
+          properties = {};
+        }
+
+        var table = $("<table><tr><th>Column</th><th>Value</th></tr></table>");
+        var keys = Object.keys(properties);
+        var banProperties = ['geom'];
+        for (var k = 0; k < keys.length; k++) {
+          if (banProperties.indexOf(keys[k]) === -1) {
+            var row = $("<tr></tr>");
+            row.append($("<td></td>").text(keys[k]));
+            row.append($("<td></td>").text(properties[keys[k]]));
+            table.append(row);
+          }
+        }
+        return '<table border="1">' + table.html() + '</table>';
+      }
+
 
       function addLayer( features ) {
         //create an L.geoJson layer, add it to the map
@@ -70,6 +89,12 @@
                 fillOpacity: 0.7
             },
 
+            onEachFeature: function ( feature, layer ) {
+              if (feature.geometry.type !== 'Point') {
+                layer.bindPopup(propertiesTable(feature.properties));
+              }
+            },
+
             pointToLayer: function ( feature, latlng ) {
               return L.circleMarker(latlng, {
                 radius: 4,
@@ -78,7 +103,7 @@
                 weight: 1,
                 opacity: 1,
                 fillOpacity: 0.8
-              });
+              }).bindPopup(propertiesTable(feature.properties));
             }
           }).addTo(map)
 
