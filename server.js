@@ -18,7 +18,9 @@ app.use(express.static(__dirname + '/public'));
 
 //expose sql endpoint, grab query as URL parameter and send it to the database
 app.get('/sql', function(req, res){
-  var sql = req.query.q;
+  var sqlstr = req.query.q;
+  var sqltoUpper = sqlstr.replace("from", "FROM");
+  var sql = sqltoUpper.replace("FROM", ", st_transform(geom, 4326) as geom FROM");
   console.log('Executing SQL: ' + sql);
 
   //query using pg-promise
