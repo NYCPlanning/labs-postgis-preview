@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
   <link rel="stylesheet" href="//cdn.datatables.net/1.10.11/css/dataTables.bootstrap.min.css">
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css">
+  <link rel="stylesheet" href="./js/codemirror-5.15.2/lib/codemirror.css">
   <link rel="stylesheet" href="./css/styles.css">
 </head>
  <body>
@@ -32,24 +32,22 @@
           <div class="form-horizontal">
             <div class="form-group">
                 <div class="col-md-12">
-                    <textarea id="sqlPane" class="form-control" rows="15" placeholder="Type your SQL" required onkeyup="getText()"></textarea>
+                    <textarea id="sqlPane" class="form-control" rows="15" required># Type your SQL here</textarea>
                     <input id="run" type="submit" class="btn btn-info pull-right" href="#">
                 </div>
-  <div class="col-md-12"><pre><code class="sql" id="foo"></code></pre></div>
-<script>
-
-function getText(){
-var sql = document.getElementById("sqlPane").value;
-document.getElementById("foo").innerHTML=sql;
-
-hljs.initHighlighting.called = false;
-hljs.initHighlighting();
-
-}
-
-</script>
-
-
+				<script>
+					window.onload = function() {					  
+					  window.editor = CodeMirror.fromTextArea(document.getElementById('sqlPane'), {
+					    mode: 'text/x-pgsql',
+					    indentWithTabs: true,
+					    smartIndent: true,
+					    lineNumbers: true,
+					    matchBrackets : true,
+					    autofocus: true,
+					    lineWrapping: true
+					  });
+					};
+				</script>
             </div>
           </div>
           <div id="notifications"></div>
@@ -79,7 +77,7 @@ hljs.initHighlighting();
   <script src="//cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
   <script src="//cdn.datatables.net/1.10.11/js/dataTables.bootstrap.min.js"></script>
   <script src="./js/script.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
-  <script>hljs.initHighlightingOnLoad();</script>
+  <script src="./js/codemirror-5.15.2/lib/codemirror.js"></script>
+  <script src="./js/codemirror-5.15.2/mode/sql/sql.js"></script>
 </body>
 </html>
