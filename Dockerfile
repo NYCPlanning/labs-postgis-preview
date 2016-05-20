@@ -11,5 +11,8 @@ RUN npm install
 # Copy files to server
 COPY . /usr/src/app
 
-EXPOSE 3000
-CMD [ "npm", "start" ]
+# Expose Port 3000
+EXPOSE 3000 
+
+# Run on container start
+CMD [ "npm", "start" ] 
