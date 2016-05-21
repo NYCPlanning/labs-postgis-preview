@@ -44,6 +44,8 @@
 									lineWrapping: true,
 									theme: 'monokai'
 								});
+								editor.replaceRange('\n', {line:2,ch:0}); // create newline for editing
+								editor.setCursor(2,0);
 							};
 						</script>
 					</div>
