@@ -35,6 +35,22 @@
 								Submit
 							</button>
 						</div>
+						<script>
+							window.onload = function() {					  
+								window.editor = CodeMirror.fromTextArea(document.getElementById('sqlPane'), {
+									mode: 'text/x-pgsql',
+									indentWithTabs: true,
+									smartIndent: true,
+									lineNumbers: false,
+									matchBrackets : true,
+									autofocus: true,
+									lineWrapping: true,
+									theme: 'monokai'
+								});
+								editor.replaceRange('\n', {line:2,ch:0}); // create newline for editing
+								editor.setCursor(2,0);
+							};
+						</script>
 					</div>
 				</div>
 				<div id="notifications"></div>
