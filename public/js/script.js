@@ -85,6 +85,7 @@
         return '<table border="1">' + table.html() + '</table>';
       }
 
+
       function addLayer( features ) {
         //create an L.geoJson layer, add it to the map
           layer = L.geoJson(features, {
