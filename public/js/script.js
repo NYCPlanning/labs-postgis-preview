@@ -35,9 +35,11 @@
             var featureCount = data.objects.output.geometries.length;
             addLayer( features ); //draw the map layer
             buildTable( features ); //build the table
+            $('#notifications').removeClass().addClass('alert alert-success');
             $('#notifications').text(featureCount + ' features returned.');
           } else {
             //write the error in the sidebar
+            $('#notifications').removeClass().addClass('alert alert-danger');
             $('#notifications').text(data.error);
           }
         })
