@@ -20,6 +20,8 @@ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreet
   $('form').submit(function(e) {
     e.preventDefault();
 
+    $('#run').addClass('active');
+
     clearTable();
 
     var sql = editor.getDoc().getValue();
@@ -33,7 +35,14 @@ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreet
   
     //pass the query to the sql api endpoint
     $.getJSON('/sql?q=' + sql, function(data) {
-      if(!data.error) {
+      if (data.error !== undefined){
+        //write the error in the sidebar
+        $('#notifications').removeClass().addClass('alert alert-danger');
+        $('#notifications').text(data.error);
+      } else if (data.objects.output.geometries.length == 0) {
+        $('#notifications').removeClass().addClass('alert alert-warning');
+        $('#notifications').text('Your query returned no features.');
+      } else {
         //convert topojson coming over the wire to geojson using mapbox omnivore
         var features = omnivore.topojson.parse(data); //should this return a featureCollection?  Right now it's just an array of features.
         var featureCount = data.objects.output.geometries.length;
@@ -41,11 +50,8 @@ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreet
         buildTable( features ); //build the table
         $('#notifications').removeClass().addClass('alert alert-success');
         $('#notifications').text(featureCount + ' features returned.');
-      } else {
-        //write the error in the sidebar
-        $('#notifications').removeClass().addClass('alert alert-danger');
-        $('#notifications').text(data.error);
       }
+      $('#run').removeClass('active');
     })
   })
 
