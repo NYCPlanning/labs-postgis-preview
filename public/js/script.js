@@ -132,15 +132,13 @@
           var $tr = $('<tr/>');
 
           fields.forEach( function( field ) {
-            $tr.append('<td>' + feature.properties[field] + '</td>')
-          })
-
-
+            $tr.append('<td>' + feature.properties[field] + '</td>');
+          });
 
           $('#table').find('tbody').append($tr);
         });
 
-           $('#table>table').DataTable();
+        $('#table>table').DataTable();
       }
 
       function clearTable() {
@@ -148,7 +146,5 @@
         $('#table').find('tfoot').empty();
         $('#table').find('tbody').empty();
       };
-
-
 
     }());
