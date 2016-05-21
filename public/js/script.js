@@ -28,7 +28,6 @@
       
         //pass the query to the sql api endpoint
         $.getJSON('/sql?q=' + sql, function(data) {
-          console.log(data)
           if(!data.error) {
             //convert topojson coming over the wire to geojson using mapbox omnivore
             var features = omnivore.topojson.parse(data); //should this return a featureCollection?  Right now it's just an array of features.
@@ -129,13 +128,11 @@
         });
 
         features.forEach( function( feature ) {
-          console.log(feature);
           //create tr with tds in memory
           var $tr = $('<tr/>');
 
           fields.forEach( function( field ) {
             $tr.append('<td>' + feature.properties[field] + '</td>')
-            console.log($tr);
           })
 
 
