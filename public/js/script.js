@@ -19,7 +19,7 @@
 
         clearTable();
 
-        var sql = $('#sqlPane').val();
+        var sql = editor.getDoc().getValue();
         
         //clear the map
         if( map.hasLayer(layer)) {
