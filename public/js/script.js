@@ -17,8 +17,8 @@ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreet
   updateHistoryButtons();
 
   //listen for submit of new query
-  $('form').submit(function(e) {
-    e.preventDefault();
+  $('#run').click(function(e) {
+  
 
     $('#run').addClass('active');
 
