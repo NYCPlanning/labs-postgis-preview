@@ -23,7 +23,7 @@ The frontend is a simple bootstrap layout with a leaflet map, cartodb basemaps, 
 - Edit `config.sample.js` to include your database connection details, rename it `config.js`
 - Install dependencies `npm install`
 - Run the express app `node server.js`
-- Load the frontend `http://localhost:3000`
+- Load the frontend `http://localhost:4000`
 - Query like a boss
 
 ### Notes
