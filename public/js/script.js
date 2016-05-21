@@ -32,12 +32,13 @@
           if(!data.error) {
             //convert topojson coming over the wire to geojson using mapbox omnivore
             var features = omnivore.topojson.parse(data); //should this return a featureCollection?  Right now it's just an array of features.
+            var featureCount = data.objects.output.geometries.length;
             addLayer( features ); //draw the map layer
             buildTable( features ); //build the table
-            
+            $('#notifications').text(featureCount + ' features returned.');
           } else {
             //write the error in the sidebar
-            $('#notifications').text(data.error)
+            $('#notifications').text(data.error);
           }
         })
       })
