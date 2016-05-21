@@ -1,5 +1,5 @@
 #PostGIS Preview
-A lightweight node api and frontend for quicky previewing PostGIS queries. _Pull Requests Welcomed!_  See TODOs below, real issues coming shortly.
+A lightweight node api and frontend for quicky previewing PostGIS queries. _Pull Requests Welcomed!_  Take a look at the [open issues](https://github.com/chriswhong/postgis-preview/issues)
 
 ![preview](https://cloud.githubusercontent.com/assets/1833820/14897977/7e8088cc-0d52-11e6-9c0e-b56f3b2af954.gif)
 
@@ -28,15 +28,5 @@ The frontend is a simple bootstrap layout with a leaflet map, cartodb basemaps, 
 
 ### Notes
 
-- PostGIS preview expects your geometry column to be called `geom`, and that it contains WGS84 geometries
+- PostGIS preview expects your geometry column to be called `geom`, and that it contains WGS84 geometries. See [#17](https://github.com/chriswhong/postgis-preview/pull/17) for some discussion on how to allow for other geom column names and SRIDs.
 
-###Todo
-
-- ERROR HANDLING EVERYWHERE
-
-- Add Tabular View
-- Add Simple Infowindow with all attributes
-- Add SQL Syntax Highlighting (Codemirror?)
-- Add recent queries and forward/backward arrows
-- Add url hash to remember data vs. map view 
-- Add client-side data export as CSV, geoJSON, etc
