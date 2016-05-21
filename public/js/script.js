@@ -17,6 +17,8 @@
       $('form').submit(function(e) {
         e.preventDefault();
 
+        $('#run').addClass('active');
+
         clearTable();
 
         var sql = editor.getDoc().getValue();
@@ -41,6 +43,7 @@
             $('#notifications').removeClass().addClass('alert alert-danger');
             $('#notifications').text(data.error);
           }
+          $('#run').removeClass('active');
         })
       })
 
