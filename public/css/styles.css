@@ -76,6 +76,9 @@
       overflow-x: scroll;
     }
 
+    .CodeMirror {
+      padding-left: 8px;
+    }
 
 
   

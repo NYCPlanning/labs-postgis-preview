@@ -59,4 +59,4 @@ function dbGeoParse(data) {
 
 //start the server
 app.listen(port);
-console.log('Listening on port ' + port + '...');
+console.log('postgis-preview is listening on port ' + port + '...');

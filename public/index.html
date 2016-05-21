@@ -30,24 +30,14 @@
 					<div class="form-group">
 						<div class="col-md-12">
 							<textarea id="sqlPane" class="form-control" rows="15" required>/* Type your SQL here */</textarea>
+							<div id="history-previous" class="btn btn-info disabled">
+								<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+							</div>
+							<div id="history-next" class="btn btn-info disabled">
+								<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+							</div>
 							<input id="run" type="submit" class="btn btn-info pull-right" href="#">
 						</div>
-						<script>
-							window.onload = function() {					  
-								window.editor = CodeMirror.fromTextArea(document.getElementById('sqlPane'), {
-									mode: 'text/x-pgsql',
-									indentWithTabs: true,
-									smartIndent: true,
-									lineNumbers: false,
-									matchBrackets : true,
-									autofocus: true,
-									lineWrapping: true,
-									theme: 'monokai'
-								});
-								editor.replaceRange('\n', {line:2,ch:0}); // create newline for editing
-								editor.setCursor(2,0);
-							};
-						</script>
 					</div>
 				</div>
 				<div id="notifications"></div>
