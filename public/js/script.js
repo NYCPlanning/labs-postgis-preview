@@ -19,7 +19,7 @@ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreet
   //listen for submit of new query
   $('#run').click(function(e) {
   
-
+    $('#notifications').hide();
     $('#run').addClass('active');
 
     clearTable();
@@ -35,6 +35,8 @@ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreet
   
     //pass the query to the sql api endpoint
     $.getJSON('/sql?q=' + sql, function(data) {
+      $('#run').removeClass('active');
+      $('#notifications').show();
       if (data.error !== undefined){
         //write the error in the sidebar
         $('#notifications').removeClass().addClass('alert alert-danger');
@@ -51,7 +53,7 @@ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreet
         $('#notifications').removeClass().addClass('alert alert-success');
         $('#notifications').text(featureCount + ' features returned.');
       }
-      $('#run').removeClass('active');
+
     })
   })
 
