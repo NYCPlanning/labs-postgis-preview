@@ -34,7 +34,7 @@ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreet
     addToHistory(sql);
   
     //pass the query to the sql api endpoint
-    $.getJSON('/sql?q=' + sql, function(data) {
+    $.getJSON('/sql?q=' + encodeURIComponent(sql), function(data) {
       $('#run').removeClass('active');
       $('#notifications').show();
       if (data.error !== undefined){
