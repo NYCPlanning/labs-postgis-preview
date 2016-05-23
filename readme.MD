@@ -4,9 +4,9 @@ A lightweight node api and frontend for quicky previewing PostGIS queries. _Pull
 ![preview](https://cloud.githubusercontent.com/assets/1833820/14897977/7e8088cc-0d52-11e6-9c0e-b56f3b2af954.gif)
 
 ###Why
-I needed to be able to test out PostGIS queries in a local environment and iterate quickly.  CartoDB provides this functionality, giving users a SQL pane and a map view to quickly see the geometries returned from the database (This UI and SQL preview workflow are inspired by the CartoDB editor)
+Out team at the NYC Department of City Planning needed to be able to test out PostGIS queries in a local environment and iterate quickly.  CartoDB provides this functionality, giving users a SQL pane and a map view to quickly see the geometries returned from the database (This UI and SQL preview workflow are inspired by the CartoDB editor)
 
-I asked on twitter if anyone had solutions to this problem, and reponses included:
+When asking on twitter if anyone had solutions to this problem, responses included:
   - Run queries in pgadmin and use `ST_asGeoJson()`, copy and paste the geojson into [geojson.io](http://www.geojson.io)
   - Use [QGIS](http://www.qgis.org/en/site/) dbmanager.  This works, but requires a few clicks once the data are returned to add them to the map.
   - Use various command line tools that show previews in the terminal or send the results to geojson.io programmatically.
