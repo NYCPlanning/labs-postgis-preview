@@ -48,7 +48,16 @@ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreet
         //convert topojson coming over the wire to geojson using mapbox omnivore
         var features = omnivore.topojson.parse(data); //should this return a featureCollection?  Right now it's just an array of features.
         var featureCount = data.objects.output.geometries.length;
-        addLayer( features ); //draw the map layer
+        var geoFeatures = features.filter(function(feature) {
+          return feature.geometry;
+        });
+        if (geoFeatures.length) {
+          addLayer( geoFeatures ); //draw the map layer
+        } else {
+          // There is no map to display, so switch to the data view
+          $('#map').hide();
+          $('#table').show();
+        }
         buildTable( features ); //build the table
         $('#notifications').removeClass().addClass('alert alert-success');
         $('#notifications').text(featureCount + ' features returned.');
