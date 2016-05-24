@@ -51,16 +51,21 @@ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreet
         var geoFeatures = features.filter(function(feature) {
           return feature.geometry;
         });
+        $('#notifications').removeClass().addClass('alert alert-success');
         if (geoFeatures.length) {
           addLayer( geoFeatures ); //draw the map layer
+          $('#notifications').text(featureCount + ' features returned.');
         } else {
           // There is no map to display, so switch to the data view
-          $('#map').hide();
-          $('#table').show();
+          $('#notifications').html(featureCount + ' features returned.<br/>No geometries returned, see the <a href="#" class="data-view">data view</a> for results.');
+          //toggle map and data view
+          $('a.data-view').click(function(){
+            $('#map').hide();
+            $('#table').show();
+          });
+
         }
         buildTable( features ); //build the table
-        $('#notifications').removeClass().addClass('alert alert-success');
-        $('#notifications').text(featureCount + ' features returned.');
       }
 
     })
