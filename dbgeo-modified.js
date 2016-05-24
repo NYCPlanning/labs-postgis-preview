@@ -69,7 +69,7 @@
             parsedRow.geometry = wellknown(point);
           }
 
-          if (Object.keys(row).length > 1) {
+          if (Object.keys(row).length > 0) {
             parsedRow.properties = {};
             async.each(Object.keys(row), function(property, propCallback) {
               if (property !== params.geometryColumn) {
