@@ -55,7 +55,9 @@
         async.each(params.data, function(row, geomCallback) {
 
           var parsedRow = { "type": "Feature" };
-          if (params.geometryType === "wkt") {
+          if (!row[params.geometryColumn]) {
+            parsedRow.geometry = null;
+          } else if (params.geometryType === "wkt") {
             parsedRow.geometry = wellknown(row[params.geometryColumn]);
           } else if (params.geometryType === "wkb") {
             var wkbBuffer = new Buffer(row[params.geometryColumn], 'hex');
@@ -67,7 +69,7 @@
             parsedRow.geometry = wellknown(point);
           }
 
-          if (Object.keys(row).length > 1) {
+          if (Object.keys(row).length > 0) {
             parsedRow.properties = {};
             async.each(Object.keys(row), function(property, propCallback) {
               if (property !== params.geometryColumn) {
