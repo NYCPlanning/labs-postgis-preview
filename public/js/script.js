@@ -17,8 +17,11 @@ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreet
   updateHistoryButtons();
 
   //listen for submit of new query
-  $('#run').click(function(e) {
-  
+  $('#run').click(function(){
+    submitQuery();
+  });
+
+  function submitQuery() {
     $('#notifications').hide();
     $('#run').addClass('active');
 
@@ -67,9 +70,8 @@ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreet
         }
         buildTable( features ); //build the table
       }
-
-    })
-  })
+    });
+  };
 
   //toggle map and data view
   $('.btn-group button').click(function(e) {
@@ -84,8 +86,7 @@ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreet
       $('#map').show();
       $('#table').hide();
     }
-
-  })
+  });
 
   //forward and backward buttons for query history
   $('#history-previous').click(function() {
@@ -98,6 +99,16 @@ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreet
     historyIndex++;
     updateSQL(queryHistory[historyIndex]);
     updateHistoryButtons();
+  });
+
+  // initialize keyboard shortcut for submit
+  $(window).keydown(function(e){
+    if (e.metaKey && e.keyCode == 83) {
+      // crtl/cmd+S for submit
+      e.preventDefault();
+      submitQuery();
+      return false;
+    }
   });
 
   function propertiesTable( properties ) {
@@ -118,7 +129,6 @@ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreet
     }
     return '<table border="1">' + table.html() + '</table>';
   }
-
 
   function addLayer( features ) {
     //create an L.geoJson layer, add it to the map
