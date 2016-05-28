@@ -95,3 +95,11 @@ body {
   opacity: 1;
   width: auto; /* This doesn't work, just fix for unkown width elements */
 }
+
+.pull-left {
+  margin-right:5px;
+}
+
+#download {
+  display: none;
+}

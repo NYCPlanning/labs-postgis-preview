@@ -5,7 +5,8 @@
 var express = require('express'),
   Mustache = require('mustache'),
   pgp = require('pg-promise')(),
-  dbgeo = require("./dbgeo-modified.js");
+  dbgeo = require('dbgeo'),
+  jsonexport = require('jsonexport');
 
 //create express app and prepare db connection
 var app = express(),
@@ -19,16 +20,32 @@ app.use(express.static(__dirname + '/public'));
 //expose sql endpoint, grab query as URL parameter and send it to the database
 app.get('/sql', function(req, res){
   var sql = req.query.q;
-  console.log('Executing SQL: ' + sql);
+  var format = req.query.format || 'topojson';
+  console.log('Executing SQL: ' + sql, format);
 
   //query using pg-promise
   db.any(sql)
     .then(function (data) { //use dbgeo to convert WKB from PostGIS into topojson
-        return dbGeoParse(data);
+        if(format=='csv') {
+          return jsonExport(data);
+        } else {
+          return dbGeoParse(data, format);
+        }
+       
     })
     .then(function (data) {
-        console.log("DATA:", data);
+      if(format=='csv'){
+        res.setHeader('Content-disposition', 'attachment; filename=query.csv');
+        res.setHeader('Content-Type','text/csv');
         res.send(data);
+      } else if (format=='geojson') {
+        res.setHeader('Content-disposition', 'attachment; filename=query.geojson');
+        res.setHeader('Content-Type','application/json');
+        res.send(data);
+      } else {
+        res.send(data);
+      }
+        
     })
     .catch(function (err) { //send the error message if the query didn't work
         var msg = err.message || err;
@@ -40,11 +57,11 @@ app.get('/sql', function(req, res){
 
 });
 
-function dbGeoParse(data) {
+function dbGeoParse(data, format) {
     return new Promise(function (resolve, reject) {
         dbgeo.parse({
             data: data,
-            outputFormat: 'topojson',
+            outputFormat: format,
             geometryColumn: 'geom',
             geometryType: 'wkb'
         }, function (err, result) {
@@ -55,6 +72,20 @@ function dbGeoParse(data) {
             }
         });
     });
+}
+
+function jsonExport(data) {
+  //remove geom
+  data.forEach(function(row) {
+    (row.geom) ? delete row.geom : null;
+  });
+
+  return new Promise(function (resolve, reject) {
+      jsonexport(data,function(err, csv){
+      if(err) return console.log(err);
+      resolve(csv);
+    });
+  });
 }
 
 //start the server

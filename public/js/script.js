@@ -7,6 +7,8 @@
   //layer will be where we store the L.geoJSON we'll be drawing on the map
   var layer;
 
+  var sql;
+
   //add CartoDB 'dark matter' basemap
   L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
@@ -23,11 +25,12 @@ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreet
 
   function submitQuery() {
     $('#notifications').hide();
+    $('#download').hide();
     $('#run').addClass('active');
 
     clearTable();
 
-    var sql = editor.getDoc().getValue();
+    sql = editor.getDoc().getValue();
     
     //clear the map
     if( map.hasLayer(layer)) {
@@ -40,6 +43,7 @@ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreet
     $.getJSON('/sql?q=' + encodeURIComponent(sql), function(data) {
       $('#run').removeClass('active');
       $('#notifications').show();
+      $('#download').show();
       if (data.error !== undefined){
         //write the error in the sidebar
         $('#notifications').removeClass().addClass('alert alert-danger');
@@ -99,6 +103,16 @@ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreet
     historyIndex++;
     updateSQL(queryHistory[historyIndex]);
     updateHistoryButtons();
+  });
+
+  $('#geojson').click(function() {
+    var url = '/sql?q=' + encodeURIComponent(sql) + '&format=geojson';
+    window.open(url, '_blank');
+  });
+
+  $('#csv').click(function() {
+    var url = '/sql?q=' + encodeURIComponent(sql) + '&format=csv';
+    window.open(url, '_blank');
   });
 
   // initialize keyboard shortcut for submit

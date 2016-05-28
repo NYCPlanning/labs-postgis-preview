@@ -4,13 +4,15 @@
   "description": "A lightweight node api and frontend for quicky previewing PostGIS queries",
   "main": "config.js",
   "dependencies": {
+    "async": "~1.2.0",
+    "dbgeo": "^0.1.1",
     "express": "^4.13.4",
+    "jsonexport": "^1.1.0",
     "mustache": "^2.2.1",
     "pg-promise": "^4.0.4",
-    "wkx": "^0.2.0",
-    "async": "~1.2.0",
     "topojson": "~1.6.14",
-    "wellknown": "~0.3.0"
+    "wellknown": "~0.3.0",
+    "wkx": "^0.2.0"
   },
   "devDependencies": {},
   "scripts": {
