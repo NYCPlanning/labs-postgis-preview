@@ -3,7 +3,6 @@
 
 //dependencies
 var express = require('express'),
-    Mustache = require('mustache'),
     pgp = require('pg-promise')(),
     dbgeo = require('dbgeo'),
     jsonexport = require('jsonexport');
