@@ -39,7 +39,7 @@ app.get('/sql', function (req, res) {
                         return data;
                     });
                 default:
-                    return data;
+                    return dbGeoParse(data, format);
             }
         })
         .then(function (data) {
