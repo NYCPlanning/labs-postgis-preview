@@ -25,20 +25,25 @@ app.get('/sql', function (req, res) {
     //query using pg-promise
     db.any(sql)
         .then(function (data) { //use dbgeo to convert WKB from PostGIS into topojson
-            return format == 'csv' ? jsonExport(data) : dbGeoParse(data, format);
+            switch (format) {
+                case 'csv':
+                    return jsonExport(data).then(function (data) {
+                        res.setHeader('Content-disposition', 'attachment; filename=query.csv');
+                        res.setHeader('Content-Type', 'text/csv');
+                        return data;
+                    });
+                case 'geojson':
+                    return dbGeoParse(data, format).then(function (data) {
+                        res.setHeader('Content-disposition', 'attachment; filename=query.geojson');
+                        res.setHeader('Content-Type', 'application/json');
+                        return data;
+                    });
+                default:
+                    return data;
+            }
         })
         .then(function (data) {
-            if (format == 'csv') {
-                res.setHeader('Content-disposition', 'attachment; filename=query.csv');
-                res.setHeader('Content-Type', 'text/csv');
-                res.send(data);
-            } else if (format == 'geojson') {
-                res.setHeader('Content-disposition', 'attachment; filename=query.geojson');
-                res.setHeader('Content-Type', 'application/json');
-                res.send(data);
-            } else {
-                res.send(data);
-            }
+            res.send(data);
         })
         .catch(function (err) { //send the error message if the query didn't work
             var msg = err.message || err;
@@ -47,7 +52,6 @@ app.get('/sql', function (req, res) {
                 error: msg
             });
         });
-
 });
 
 function dbGeoParse(data, format) {
