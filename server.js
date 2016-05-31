@@ -55,6 +55,15 @@ app.get('/sql', function (req, res) {
 });
 
 function dbGeoParse(data, format) {
+    //check the raw data for geom, inject nulls if there is none
+    if(!data[0].geom) {
+       data.forEach(function(row) {
+        row.geom='010100000000000000000000000000000000000000';
+       }) 
+    }
+    
+
+
     return new Promise(function (resolve, reject) {
         dbgeo.parse({
             data: data,
@@ -71,12 +80,7 @@ function dbGeoParse(data, format) {
     });
 }
 
-function jsonExport(data) {
-    //remove geom
-    data.forEach(function (row) {
-        delete row.geom;
-    });
-    
+function jsonExport(data) { 
     return new Promise(function (resolve, reject) {
         jsonexport(data, function (err, csv) {
             if (err) {
