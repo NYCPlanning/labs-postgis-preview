@@ -80,8 +80,8 @@ function dbGeoParse(data, format) {
     });
 }
 
-function jsonExport(data) { 
-    function jsonExport(data) {         +function jsonExport(data) { 
+
+function jsonExport(data) {  
     //remove geom     
     data.forEach(function (row) {     
         delete row.geom;      
