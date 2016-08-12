@@ -20,7 +20,7 @@ The frontend is a simple Bootstrap layout with a Leaflet map, CartoDB basemaps, 
 
 - Clone this repo
 - Have a PostGIS instance running somewhere that the node app can talk to
-- Edit `config.sample.js` to include your database connection details, rename it `config.js`
+- Edit `.env.sample` to include your `DATABASE_URL`, rename it `.env`
 - Install dependencies `npm install`
 - Run the express app `node server.js`
 - Load the frontend `http://localhost:4000`

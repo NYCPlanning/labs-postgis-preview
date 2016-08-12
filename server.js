@@ -6,12 +6,13 @@ var express = require('express'),
     pgp = require('pg-promise')(),
     dbgeo = require('dbgeo'),
     jsonexport = require('jsonexport');
+require('dotenv').config();
 
 //create express app and prepare db connection
 var app = express(),
     port = process.env.PORT || 4000,
-    config = require('./config.js'),
-    db = pgp(config);
+    connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/postgres',
+    db = pgp(connectionString);
 
 //use express static to serve up the frontend
 app.use(express.static(__dirname + '/public'));
@@ -55,18 +56,8 @@ app.get('/sql', function (req, res) {
 });
 
 function dbGeoParse(data, format) {
-    //check the raw data for geom, inject nulls if there is none
-    if(!data[0].geom) {
-       data.forEach(function(row) {
-        row.geom='010100000000000000000000000000000000000000';
-       }) 
-    }
-    
-
-
     return new Promise(function (resolve, reject) {
-        dbgeo.parse({
-            data: data,
+        dbgeo.parse(data, {
             outputFormat: format,
             geometryColumn: 'geom',
             geometryType: 'wkb'
