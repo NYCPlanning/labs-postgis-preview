@@ -58,9 +58,7 @@ app.get('/sql', function (req, res) {
 function dbGeoParse(data, format) {
     return new Promise(function (resolve, reject) {
         dbgeo.parse(data, {
-            outputFormat: format,
-            geometryColumn: 'geom',
-            geometryType: 'wkb'
+            outputFormat: format
         }, function (err, result) {
             if (err) {
                 reject(err);
@@ -72,12 +70,12 @@ function dbGeoParse(data, format) {
 }
 
 
-function jsonExport(data) {  
-    //remove geom     
-    data.forEach(function (row) {     
-        delete row.geom;      
+function jsonExport(data) {
+    //remove geom
+    data.forEach(function (row) {
+        delete row.geom;
     });
-    
+
     return new Promise(function (resolve, reject) {
         jsonexport(data, function (err, csv) {
             if (err) {
