@@ -103,3 +103,8 @@ body {
 #download {
   display: none;
 }
+
+.leaflet-popup-content {
+  max-height: 50vh;
+  overflow-y: scroll;
+}
