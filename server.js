@@ -4,7 +4,7 @@
 //dependencies
 var express = require('express'),
     pgp = require('pg-promise')(),
-    dbgeo = require('dbgeo'),
+    dbgeo_gen = require('dbgeo_gen'),
     jsonexport = require('jsonexport');
 require('dotenv').config();
 
@@ -25,7 +25,7 @@ app.get('/sql', function (req, res) {
 
     //query using pg-promise
     db.any(sql)
-        .then(function (data) { //use dbgeo to convert WKB from PostGIS into topojson
+        .then(function (data) { //use dbgeo_gen to convert WKB from PostGIS into topojson
             switch (format) {
                 case 'csv':
                     return jsonExport(data).then(function (data) {
@@ -34,13 +34,13 @@ app.get('/sql', function (req, res) {
                         return data;
                     });
                 case 'geojson':
-                    return dbGeoParse(data, format).then(function (data) {
+                    return dbgeo_genParse(data, format).then(function (data) {
                         res.setHeader('Content-disposition', 'attachment; filename=query.geojson');
                         res.setHeader('Content-Type', 'application/json');
                         return data;
                     });
                 default:
-                    return dbGeoParse(data, format);
+                    return dbgeo_genParse(data, format);
             }
         })
         .then(function (data) {
@@ -55,9 +55,9 @@ app.get('/sql', function (req, res) {
         });
 });
 
-function dbGeoParse(data, format) {
+function dbgeo_genParse(data, format) {
     return new Promise(function (resolve, reject) {
-        dbgeo.parse(data, {
+        dbgeo_gen.parse(data, {
             outputFormat: format
         }, function (err, result) {
             if (err) {
