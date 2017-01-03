@@ -5,7 +5,7 @@
   "main": "config.js",
   "dependencies": {
     "async": "~1.2.0",
-    "dbgeo_gen": "^0.0.3",
+    "dbgeo_gen": "^0.0.7",
     "dotenv": "^2.0.0",
     "express": "^4.13.4",
     "jsonexport": "^1.1.0",
