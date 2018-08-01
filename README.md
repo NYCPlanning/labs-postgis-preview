@@ -6,6 +6,9 @@ A lightweight node api and frontend for quickly previewing PostGIS queries. _Pul
 ### Gitter Chat
 [Join the conversation on Gitter](https://gitter.im/postgis-preview/Lobby#)
 
+### Contributing
+Take a look a the open issues. Come [chat on Gitter]((https://gitter.im/postgis-preview/Lobby#)) if you have questions.  Create a Pull Request on the `develop` branch.
+
 ### Why
 Our team at the NYC Department of City Planning needed to be able to test out PostGIS queries in a local environment and iterate quickly.  CartoDB provides this functionality, giving users a SQL pane and a map view to quickly see the geometries returned from the database (This UI and SQL preview workflow are inspired by the CartoDB editor)
 
