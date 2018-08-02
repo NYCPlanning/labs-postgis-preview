@@ -1,0 +1,14 @@
+{
+  parser: "babel-eslint",
+  "extends": "airbnb-base",
+  "rules": {
+    "max-len": [0, 120, 2, {ignoreComments: true}],
+    "no-param-reassign": [0],
+    "radix": [0],
+    "camelcase": [0],
+  },
+  "env": {
+    "node": true,
+    "mocha": true
+  },
+}

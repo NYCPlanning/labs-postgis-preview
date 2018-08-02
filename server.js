@@ -1,92 +1,91 @@
-//postgis-preview
-//A super simple node app + leaflet frontend for quickly viewing PostGIS query results
+// postgis-preview
+// A super simple node app + leaflet frontend for quickly viewing PostGIS query results
 
-//dependencies
-var express = require('express'),
-    pgp = require('pg-promise')(),
-    dbgeo = require('dbgeo'),
-    jsonexport = require('jsonexport');
+// dependencies
+const express = require('express');
+const pgp = require('pg-promise')();
+const dbgeo = require('dbgeo');
+const jsonexport = require('jsonexport');
 require('dotenv').config();
 
-//create express app and prepare db connection
-var app = express(),
-    port = process.env.PORT || 4000,
-    connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/postgres',
-    db = pgp(connectionString);
+// create express app and prepare db connection
+const app = express();
+const port = process.env.PORT || 4000;
+const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/postgres';
+const db = pgp(connectionString);
 
-//use express static to serve up the frontend
-app.use(express.static(__dirname + '/public'));
-
-//expose sql endpoint, grab query as URL parameter and send it to the database
-app.get('/sql', function (req, res) {
-    var sql = req.query.q;
-    var format = req.query.format || 'topojson';
-    console.log('Executing SQL: ' + sql, format);
-
-    //query using pg-promise
-    db.any(sql)
-        .then(function (data) { //use dbgeo to convert WKB from PostGIS into topojson
-            switch (format) {
-                case 'csv':
-                    return jsonExport(data).then(function (data) {
-                        res.setHeader('Content-disposition', 'attachment; filename=query.csv');
-                        res.setHeader('Content-Type', 'text/csv');
-                        return data;
-                    });
-                case 'geojson':
-                    return dbGeoParse(data, format).then(function (data) {
-                        res.setHeader('Content-disposition', 'attachment; filename=query.geojson');
-                        res.setHeader('Content-Type', 'application/json');
-                        return data;
-                    });
-                default:
-                    return dbGeoParse(data, format);
-            }
-        })
-        .then(function (data) {
-            res.send(data);
-        })
-        .catch(function (err) { //send the error message if the query didn't work
-            var msg = err.message || err;
-            console.log("ERROR:", msg);
-            res.send({
-                error: msg
-            });
-        });
-});
-
-function dbGeoParse(data, format) {
-    return new Promise(function (resolve, reject) {
-        dbgeo.parse(data, {
-            outputFormat: format
-        }, function (err, result) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(result);
-            }
-        });
-    });
-}
-
+// use express static to serve up the frontend
+app.use(express.static(`${__dirname}/public`));
 
 function jsonExport(data) {
-    //remove geom
-    data.forEach(function (row) {
-        delete row.geom;
-    });
+  // remove geom
+  data.forEach((row) => {
+    delete row.geom;
+  });
 
-    return new Promise(function (resolve, reject) {
-        jsonexport(data, function (err, csv) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(csv);
-            }
-        });
+  return new Promise(((resolve, reject) => {
+    jsonexport(data, (err, csv) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(csv);
+      }
     });
+  }));
 }
 
-//start the server
+function dbGeoParse(data, format) {
+  return new Promise(((resolve, reject) => {
+    dbgeo.parse(data, {
+      outputFormat: format,
+    }, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  }));
+}
+
+// expose sql endpoint, grab query as URL parameter and send it to the database
+app.get('/sql', (req, res) => {
+  const sql = req.query.q;
+  const format = req.query.format || 'topojson';
+  console.log(`Executing SQL: ${sql}`, format); // eslint-disable-line
+
+  // query using pg-promise
+  db.any(sql)
+    .then((data) => { // use dbgeo to convert WKB from PostGIS into topojson
+      switch (format) {
+        case 'csv':
+          return jsonExport(data).then((csv) => {
+            res.setHeader('Content-disposition', 'attachment; filename=query.csv');
+            res.setHeader('Content-Type', 'text/csv');
+            return csv;
+          });
+        case 'geojson':
+          return dbGeoParse(data, format).then((geojson) => {
+            res.setHeader('Content-disposition', 'attachment; filename=query.geojson');
+            res.setHeader('Content-Type', 'application/json');
+            return geojson;
+          });
+        default:
+          return dbGeoParse(data, format);
+      }
+    })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => { // send the error message if the query didn't work
+      const msg = err.message || err;
+      console.log('ERROR:', msg); // eslint-disable-line
+      res.send({
+        error: msg,
+      });
+    });
+});
+
+// start the server
 app.listen(port);
-console.log('postgis-preview is listening on port ' + port + '...');
+console.log(`Postgis Preview is listening on port ${port}...`); // eslint-disable-line
