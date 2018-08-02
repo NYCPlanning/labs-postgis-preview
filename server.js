@@ -3,88 +3,40 @@
 
 // dependencies
 const express = require('express');
-const pgp = require('pg-promise')();
-const dbgeo = require('dbgeo');
-const jsonexport = require('jsonexport');
+const NodeCache = require('node-cache');
+
 require('dotenv').config();
 
 // create express app and prepare db connection
 const app = express();
 const port = process.env.PORT || 4000;
 const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/postgres';
-const db = pgp(connectionString);
+
+// require pg-promise
+const pgp = require('pg-promise')({
+  query(e) {
+     (process.env.DEBUG === 'true') ? console.log(e.query) : null; // eslint-disable-line
+  },
+});
+
+// initialize database connection
+app.db = pgp(connectionString);
+
+// use node-cache to store SQL queries
+app.tileCache = new NodeCache({ stdTTL: 3600 });
+
+// allows CORS
+app.all('*', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
 
 // use express static to serve up the frontend
 app.use(express.static(`${__dirname}/public`));
 
-function jsonExport(data) {
-  // remove geom
-  data.forEach((row) => {
-    delete row.geom;
-  });
-
-  return new Promise(((resolve, reject) => {
-    jsonexport(data, (err, csv) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(csv);
-      }
-    });
-  }));
-}
-
-function dbGeoParse(data, format) {
-  return new Promise(((resolve, reject) => {
-    dbgeo.parse(data, {
-      outputFormat: format,
-    }, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  }));
-}
-
-// expose sql endpoint, grab query as URL parameter and send it to the database
-app.get('/sql', (req, res) => {
-  const sql = req.query.q;
-  const format = req.query.format || 'topojson';
-  console.log(`Executing SQL: ${sql}`, format); // eslint-disable-line
-
-  // query using pg-promise
-  db.any(sql)
-    .then((data) => { // use dbgeo to convert WKB from PostGIS into topojson
-      switch (format) {
-        case 'csv':
-          return jsonExport(data).then((csv) => {
-            res.setHeader('Content-disposition', 'attachment; filename=query.csv');
-            res.setHeader('Content-Type', 'text/csv');
-            return csv;
-          });
-        case 'geojson':
-          return dbGeoParse(data, format).then((geojson) => {
-            res.setHeader('Content-disposition', 'attachment; filename=query.geojson');
-            res.setHeader('Content-Type', 'application/json');
-            return geojson;
-          });
-        default:
-          return dbGeoParse(data, format);
-      }
-    })
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => { // send the error message if the query didn't work
-      const msg = err.message || err;
-      console.log('ERROR:', msg); // eslint-disable-line
-      res.send({
-        error: msg,
-      });
-    });
-});
+// import routes
+app.use('/sql', require('./routes/sql'));
+app.use('/tiles', require('./routes/tiles'));
 
 // start the server
 app.listen(port);

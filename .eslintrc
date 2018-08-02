@@ -8,7 +8,15 @@
     "camelcase": [0],
   },
   "env": {
+    "browser": true,
     "node": true,
     "mocha": true
   },
+  "globals": {
+    "L": true,
+    "$": true,
+    "CodeMirror": true,
+    "editor": true,
+    "omnivore": true
+  }
 }
