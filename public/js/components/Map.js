@@ -19,56 +19,37 @@ function propertiesTable(properties) {
 
 class Map extends React.Component {
   componentWillReceiveProps(nextProps) {
-    const { FeatureCollection } = this.props;
-    const { FeatureCollection: nextFeatureCollection } = nextProps;
+    const { tiles } = this.props;
+    const { tiles: nextTiles } = nextProps;
 
-    if (nextFeatureCollection) this.addLayer(nextFeatureCollection);
+    if (nextTiles) this.addLayer(nextTiles);
   }
 
   componentDidMount() {
-    this.map = L.map('map')
-      .setView([40.708816, -74.008799], 11);
-
-    // add CartoDB 'dark matter' basemap
-    L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-    }).addTo(this.map);
+    this.map = new mapboxgl.Map({
+      container: 'map',
+      style: '//raw.githubusercontent.com/NYCPlanning/labs-gl-style/master/data/style.json',
+      hash: true,
+      zoom: 6.73,
+      center: [-73.265, 40.847],
+    });
   }
 
-  addLayer(FeatureCollection) {
-    if (this.map.hasLayer(this.layer)) {
-      this.map.removeLayer(this.layer);
-    }
-
-    // create an L.geoJson layer, add it to the map
-    this.layer = L.geoJson(FeatureCollection, {
-      style: {
-        color: '#fff', // border color
-        fillColor: 'steelblue',
-        weight: 1,
-        opacity: 1,
-        fillOpacity: 0.7,
+  addLayer(tiles) {
+    this.map.addLayer({
+      id: 'postgis-preview-features',
+      type: 'fill',
+      source: {
+        type: 'vector',
+        tiles,
       },
-
-      onEachFeature(feature, leafletLayer) {
-        if (feature.geometry.type !== 'Point') {
-          leafletLayer.bindPopup(propertiesTable(feature.properties));
-        }
+      'source-layer': 'layer0',
+      paint: {
+        'fill-color': 'steelblue',
+        'fill-outline-color': 'white',
+        'fill-opacity': 0.7,
       },
-
-      pointToLayer(feature, latlng) {
-        return L.circleMarker(latlng, {
-          radius: 4,
-          fillColor: '#ff7800',
-          color: '#000',
-          weight: 1,
-          opacity: 1,
-          fillOpacity: 0.8,
-        }).bindPopup(propertiesTable(feature.properties));
-      },
-    }).addTo(this.map);
-
-    this.map.fitBounds(this.layer.getBounds());
+    });
   }
 
   render() {

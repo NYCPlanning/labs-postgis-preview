@@ -21,7 +21,7 @@ class Mirror extends React.Component {
 
   render() {
     return (
-      <textarea id="sqlPane" className="form-control"></textarea>
+      <textarea id="sqlPane" className="form-control" value="SELECT * FROM states"></textarea>
     )
   }
 }

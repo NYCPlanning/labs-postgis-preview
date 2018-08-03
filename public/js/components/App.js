@@ -3,35 +3,27 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      FeatureCollection: null,
+      tiles: null,
+      bounds: null,
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSQLUpdate = this.handleSQLUpdate.bind(this);
   }
 
-  processTopoJson(topojson) {
-    // convert topojson coming over the wire to geojson using mapbox omnivore
-    const features = omnivore.topojson.parse(topojson); // should this return a featureCollection?  Right now it's just an array of features.
-    const geoFeatures = features.filter(feature => feature.geometry);
-    if (geoFeatures.length) {
-      this.setState({
-        FeatureCollection: {
-          type: 'FeatureCollection',
-          features: geoFeatures,
-        },
-      });
-    }
-  }
-
   handleSubmit() {
     const SQL = this.mirror.getSQL();
+    console.log('SUBMIT!')
 
-    fetch(`/sql?q=${encodeURIComponent(SQL)}`)
+    fetch(`/tiles/initialize?q=${encodeURIComponent(SQL)}`)
       .then(res => res.json())
       .then((json) => {
         if (!json.error) {
-          this.processTopoJson(json);
+          const { tiles, bounds } = json;
+          this.setState({
+            tiles,
+            bounds,
+          })
         } else {
           console.log(json.error);
         }
@@ -66,7 +58,7 @@ class App extends React.Component {
             </div>
           </div>
           </div>
-          <Map FeatureCollection={this.state.FeatureCollection}/>
+          <Map tiles={this.state.tiles}/>
           <div id="table">
           <table id="example" className="table table-striped table-bordered" cellSpacing="0">
             <thead>

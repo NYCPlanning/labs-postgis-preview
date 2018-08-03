@@ -15,7 +15,7 @@ const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgr
 // require pg-promise
 const pgp = require('pg-promise')({
   query(e) {
-     (process.env.DEBUG === 'true') ? console.log(e.query) : null; // eslint-disable-line
+    console.log(e.query); // eslint-disable-line
   },
 });
 

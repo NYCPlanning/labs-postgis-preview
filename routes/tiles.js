@@ -5,7 +5,9 @@ const pgp = require('pg-promise');
 const shortid = require('shortid');
 
 const router = express.Router();
-const mercator = new SphericalMercator();
+const mercator = new SphericalMercator({
+  size: 256,
+});
 
 const getQueryFile = (file) => {
   const fullPath = path.join(__dirname, '../queries', file);
@@ -48,7 +50,8 @@ router.get('/:tileId/:z/:x/:y.mvt', async (req, res) => {
   // retreive the projectids from the cache
   const tileQuery = await app.tileCache.get(tileId);
   // calculate the bounding box for this tile
-  const bbox = mercator.bbox(x, y, z, false);
+  const bbox = mercator.bbox(x, y, z, false, '900913');
+  console.log(bbox)
 
   try {
     const tile = await app.db.one(generateVectorTile, [...bbox, tileQuery]);
