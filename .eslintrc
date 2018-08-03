@@ -17,6 +17,7 @@
     "$": true,
     "CodeMirror": true,
     "editor": true,
-    "omnivore": true
+    "omnivore": true,
+    "React": true
   }
 }
