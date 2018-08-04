@@ -20,9 +20,9 @@ function propertiesTable(properties) {
 class Map extends React.Component {
   componentWillReceiveProps(nextProps) {
     const { tiles } = this.props;
-    const { tiles: nextTiles } = nextProps;
+    const { tiles: nextTiles, bounds } = nextProps;
 
-    if (nextTiles) this.addLayer(nextTiles);
+    if (nextTiles) this.setLayer(nextTiles, bounds);
   }
 
   componentDidMount() {
@@ -33,9 +33,17 @@ class Map extends React.Component {
       zoom: 6.73,
       center: [-73.265, 40.847],
     });
+
+    window.map = this.map;
   }
 
-  addLayer(tiles) {
+  setLayer(tiles, bounds) {
+    // remove the existing layer and source if they exist
+    if (this.map.getLayer('postgis-preview-features')) {
+      this.map.removeLayer('postgis-preview-features');
+      this.map.removeSource('postgis-preview-features');
+    }
+
     this.map.addLayer({
       id: 'postgis-preview-features',
       type: 'fill',
@@ -49,6 +57,10 @@ class Map extends React.Component {
         'fill-outline-color': 'white',
         'fill-opacity': 0.7,
       },
+    });
+
+    this.map.fitBounds(bounds, {
+      padding: 80,
     });
   }
 

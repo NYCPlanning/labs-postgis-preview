@@ -5,6 +5,8 @@ class App extends React.Component {
     this.state = {
       tiles: null,
       bounds: null,
+      featureCount: null,
+      errorMessage: null,
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -13,19 +15,24 @@ class App extends React.Component {
 
   handleSubmit() {
     const SQL = this.mirror.getSQL();
-    console.log('SUBMIT!')
 
     fetch(`/tiles/initialize?q=${encodeURIComponent(SQL)}`)
       .then(res => res.json())
       .then((json) => {
         if (!json.error) {
-          const { tiles, bounds } = json;
+          const { tiles, bounds, featureCount } = json;
           this.setState({
             tiles,
             bounds,
-          })
+            featureCount,
+          });
         } else {
-          console.log(json.error);
+          this.setState({
+            tiles: null,
+            bounds: null,
+            featureCount: null,
+            errorMessage: json.error,
+          });
         }
       });
   }
@@ -35,6 +42,25 @@ class App extends React.Component {
   }
 
   render() {
+    const { featureCount, errorMessage } = this.state;
+
+    let notification = null;
+
+    if (featureCount || errorMessage) {
+      let status;
+      let messageText;
+
+      if (featureCount) {
+        status = 'success';
+        messageText = `${featureCount} features returned`;
+      } else {
+        status = 'danger';
+        messageText = errorMessage;
+      }
+
+      notification = (<div id="notification" className={`alert alert-${status}`}>{messageText}</div>);
+    }
+
     return (
       <div id="container">
         <div id="sidebar">
@@ -50,7 +76,7 @@ class App extends React.Component {
               <span className="spinner"><i className="fa fa-refresh fa-spin"></i></span>
               Submit
             </button>
-            <div id="notifications"></div>
+            {notification}
             <div id="download">
               <h4>Download</h4>
               <button id="geojson" className="btn btn-info pull-left">Geojson</button>
@@ -58,7 +84,7 @@ class App extends React.Component {
             </div>
           </div>
           </div>
-          <Map tiles={this.state.tiles}/>
+          <Map tiles={this.state.tiles} bounds={this.state.bounds}/>
           <div id="table">
           <table id="example" className="table table-striped table-bordered" cellSpacing="0">
             <thead>
