@@ -26,22 +26,29 @@ router.get('/initialize', async (req, res) => {
   const tileId = shortid.generate();
   await app.tileCache.set(tileId, q);
 
-  const bbox = await app.db.one(boundingBoxQuery, { q })
-    .catch((e) => {
-      res.send({
-        error: e.message,
+  try {
+    const bbox = await app.db.one(boundingBoxQuery, { q })
+      .catch((e) => {
+        res.send({
+          error: e.message,
+        });
       });
-    });
-  const count = await app.db.one(featureCountQuery, { q })
-    .catch((e) => {
-      console.error(e.message);
-    });
+    const count = await app.db.one(featureCountQuery, { q })
+      .catch((e) => {
+        console.error(e.message);
+      });
 
-  res.send({
-    tiles: [`http://localhost:${process.env.PORT}/tiles/${tileId}/{z}/{x}/{y}.mvt`],
-    bounds: bbox.bbox,
-    featureCount: count.count,
-  });
+    if (bbox && count) {
+      res.send({
+        tiles: [`http://localhost:${process.env.PORT}/tiles/${tileId}/{z}/{x}/{y}.mvt`],
+        bounds: bbox.bbox,
+        featureCount: count.count,
+      });
+    }
+  } catch (e) {
+    console.error(e);
+  }
+
 });
 
 
