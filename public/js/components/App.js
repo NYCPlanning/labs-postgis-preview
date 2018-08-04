@@ -20,7 +20,14 @@ class App extends React.Component {
       .then(res => res.json())
       .then((json) => {
         if (!json.error) {
-          const { tiles, bounds, featureCount } = json;
+          const { tiles, featureCount } = json;
+          let { bounds } = json;
+
+          // check for null bounds
+          if (bounds[0][0] === null) {
+            bounds = null;
+          }
+
           this.setState({
             tiles,
             bounds,
@@ -51,7 +58,7 @@ class App extends React.Component {
       let messageText;
 
       if (featureCount) {
-        status = 'success';
+        status = featureCount > 0 ? 'success' : 'warning';
         messageText = `${featureCount} features returned`;
       } else {
         status = 'danger';
@@ -72,7 +79,7 @@ class App extends React.Component {
             <div id="history-next" className="btn btn-info disabled">
               <span className="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
             </div>
-            <button id="run" type="submit" className="btn btn-info pull-right has-spinner" href="#" onClick={this.handleSubmit}>
+            <button id="run" type="submit" className="btn btn-info pull-right has-spinner" href="#" onClick={this.handleSubmit} readOnly>
               <span className="spinner"><i className="fa fa-refresh fa-spin"></i></span>
               Submit
             </button>
