@@ -17,12 +17,26 @@ function propertiesTable(properties) {
   return `<table border="1">${table.html()}</table>`;
 }
 
+function removeLayers(map) {
+  if (
+    map
+      .getStyle()
+      .layers.map(i => i.id)
+      .includes('postgis-preview')
+  ) {
+    map.removeLayer('postgis-preview');
+    map.removeSource('postgis-preview');
+  }
+}
+
 class Map extends React.Component {
   componentWillReceiveProps(nextProps) {
-    const { tiles } = this.props;
+    const { tiles, geoJson } = this.props;
     const { tiles: nextTiles } = nextProps;
+    const { geoJson: nextgeoJson } = nextProps;
 
-    if (nextTiles) this.addLayer(nextTiles);
+    if (nextTiles) this.addTileLayer(nextTiles);
+    if (nextgeoJson) this.addJsonLayer(nextgeoJson);
   }
 
   componentDidMount() {
@@ -35,9 +49,27 @@ class Map extends React.Component {
     });
   }
 
-  addLayer(tiles) {
+  addJsonLayer(data) {
+    removeLayers(this.map);
     this.map.addLayer({
-      id: 'postgis-preview-features',
+      id: 'postgis-preview',
+      type: 'fill',
+      source: {
+        type: 'geojson',
+        data,
+      },
+      paint: {
+        'fill-color': 'steelblue',
+        'fill-outline-color': 'white',
+        'fill-opacity': 0.7,
+      },
+    });
+  }
+
+  addTileLayer(tiles) {
+    removeLayers(this.map);
+    this.map.addLayer({
+      id: 'postgis-preview',
       type: 'fill',
       source: {
         type: 'vector',
@@ -53,8 +85,6 @@ class Map extends React.Component {
   }
 
   render() {
-    return (
-      <div id="map"></div>
-    );
+    return <div id="map" />;
   }
 }
