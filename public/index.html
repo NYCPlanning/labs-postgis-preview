@@ -1,47 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <title>PostGIS Preview</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.css' rel='stylesheet' />
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-  <link rel="stylesheet" href="//cdn.datatables.net/1.10.11/css/dataTables.bootstrap.min.css">
-  <link rel="stylesheet" href="./js/codemirror-5.15.2/lib/codemirror.css">
-  <link rel="stylesheet" href="./js/codemirror-5.15.2/theme/monokai.css">
-  <link rel="stylesheet" href="./css/styles.css">
-</head>
+  <head>
+    <meta charset="UTF-8">
+    <title>PostGIS Preview</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link href="//api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.css" rel="stylesheet" />
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//unpkg.com/react-table@latest/react-table.css">
+    <link rel="stylesheet" href="./js/codemirror-5.15.2/lib/codemirror.css">
+    <link rel="stylesheet" href="./js/codemirror-5.15.2/theme/monokai.css">
+    <link rel="stylesheet" href="./css/styles.css">
+  </head>
 
-<body>
-  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="#">PostGIS Preview</a>
-      </div>
-      <div class="btn-group navbar-right" role="group" aria-label="...">
-        <button type="button" class="btn btn-info navbar-btn active">Map View</button>
-        <button type="button" class="btn btn-info navbar-btn">Data View</button>
-      </div>
-    </div>
-  </div>
-  <div id="root"></div>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/chroma-js/0.5.9/chroma.min.js"></script>
-  <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
-  <script src="//d3js.org/topojson.v1.min.js"></script>
-  <script src='//api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.js'></script>
-  <script src="//cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
-  <script src="//cdn.datatables.net/1.10.11/js/dataTables.bootstrap.min.js"></script>
-  <script src="//npmcdn.com/@turf/turf@5.1.6/turf.min.js"></script>
-  <script src="./js/codemirror-5.15.2/lib/codemirror.js"></script>
-  <script src="./js/codemirror-5.15.2/mode/sql/sql.js"></script>
-  <script type="text/babel" src="js/components/Map.js"></script>
-  <script type="text/babel" src="js/components/Mirror.js"></script>
-  <script type="text/babel" src="js/components/App.js"></script>
-</body>
+  <body>
+    <div id="root"></div>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
+    <script src='//api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.js'></script>
+    <script src="//npmcdn.com/@turf/turf@5.1.6/turf.min.js"></script>
+    <script src="./js/codemirror-5.15.2/lib/codemirror.js"></script>
+    <script src="./js/codemirror-5.15.2/mode/sql/sql.js"></script>
+    <script src="//unpkg.com/react-table@latest/react-table.min.js"></script>
 
+    <!-- React Components -->
+    <script type="text/babel" src="js/components/Map.js"></script>
+    <script type="text/babel" src="js/components/Mirror.js"></script>
+    <script type="text/babel" src="js/components/Table.js"></script>
+    <script type="text/babel" src="js/components/App.js"></script>
+  </body>
 </html>
-COPY TO CLIPBOARD

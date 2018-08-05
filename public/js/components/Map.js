@@ -115,6 +115,8 @@ class Map extends React.Component {
   }
 
   render() {
-    return <div id="map" />;
+    const { visible } = this.props;
+    const display = visible ? '' : 'none';
+    return <div id="map" style={{ display }}/>;
   }
 }

@@ -14,10 +14,13 @@ class App extends React.Component {
       useTiles: false,
       history,
       historyIndex,
+      rows: null,
+      view: 'map',
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSQLUpdate = this.handleSQLUpdate.bind(this);
+    this.handleViewToggle = this.handleViewToggle.bind(this);
   }
 
   componentDidMount() {
@@ -37,18 +40,23 @@ class App extends React.Component {
       .then((json) => {
         if (!json.error) {
           if (this.state.useTiles) {
-            const { tiles, bounds, featureCount } = json;
+            const { tiles, bounds, rows } = json;
             this.setState({
               tiles,
               bounds,
-              featureCount,
+              rows,
+              featureCount: rows.length,
             });
           } else {
             const geoJson = json;
             const featureCount = geoJson.features.length;
 
+            // map features to rows array for use in Table component
+            const rows = geoJson.features.map(feature => feature.properties);
+
             this.setState({
               geoJson,
+              rows,
               featureCount,
             });
           }
@@ -87,6 +95,10 @@ class App extends React.Component {
     } else {
       this.setState({ useTiles: false, tiles: null, bounds: null });
     }
+  }
+
+  handleViewToggle(view) {
+    this.setState({ view });
   }
 
   getHistory(type) {
@@ -138,82 +150,101 @@ class App extends React.Component {
     }
 
     return (
-      <div id="container">
-        <div id="sidebar">
-          <div className="col-md-12">
-            <Mirror
-              ref={(ref) => {
-                this.mirror = ref;
-              }}
-            />
-            <div
-              id="history-previous"
-              className="btn btn-info"
-              disabled={noHistoryBack}
-              onClick={() => {
-                this.getHistory('backward');
-              }}
-            >
-              <span className="glyphicon glyphicon-chevron-left" aria-hidden="true" />
+      <div className="react-root">
+        <div className="navbar navbar-inverse navbar-fixed-top" role="navigation">
+          <div className="container-fluid">
+            <div className="navbar-header">
+              <a className="navbar-brand" href="#">PostGIS Preview</a>
             </div>
-            <div
-              id="history-next"
-              className="btn btn-info"
-              disabled={noHistoryForward}
-              onClick={() => {
-                this.getHistory('forward');
-              }}
-            >
-              <span className="glyphicon glyphicon-chevron-right" aria-hidden="true" />
-            </div>
-            <button
-              id="run"
-              type="submit"
-              className="btn btn-info pull-right has-spinner"
-              href="#"
-              onClick={this.handleSubmit}
-            >
-              <span className="spinner">
-                <i className="fa fa-refresh fa-spin" />
-              </span>
-              Submit
-            </button>
-
-            <div className="form-check" style={{ marginTop: '5px' }}>
-              <input
-                id="experimentalCheck"
-                className="form-check-input"
-                type="checkbox"
-                onChange={this.toggleMvt.bind(this)}
-              />
-              <label
-                className="form-check-label"
-                htmlFor="experimentalCheck"
-                style={{ marginLeft: '10px', userSelect: 'none', fontWeight: 200 }}
+            <div className="btn-group navbar-right" role="group" aria-label="...">
+              <button
+                type="button"
+                onClick={() => { this.handleViewToggle('map'); }}
+                className="btn btn-info navbar-btn active"
               >
-                Use MVT Tile Layers (For PostGIS 2.4+)
-              </label>
-            </div>
-
-            {notification}
-            <div id="download">
-              <h4>Download</h4>
-              <button id="geojson" className="btn btn-info pull-left">
-                Geojson
+                Map
               </button>
-              <button id="csv" className="btn btn-info pull-left">
-                CSV
+              <button
+                type="button"
+                onClick={() => { this.handleViewToggle('table'); }}
+                className="btn btn-info navbar-btn"
+              >
+                Table
               </button>
             </div>
           </div>
         </div>
-        <Map tiles={this.state.tiles} geoJson={this.state.geoJson} bounds={this.state.bounds} />
-        <div id="table">
-          <table id="example" className="table table-striped table-bordered" cellSpacing="0">
-            <thead />
-            <tfoot />
-            <tbody />
-          </table>
+        <div id="container">
+          <div id="sidebar">
+            <div className="col-md-12">
+              <Mirror
+                ref={(ref) => {
+                  this.mirror = ref;
+                }}
+              />
+              <div
+                id="history-previous"
+                className="btn btn-info"
+                disabled={noHistoryBack}
+                onClick={() => {
+                  this.getHistory('backward');
+                }}
+              >
+                <span className="glyphicon glyphicon-chevron-left" aria-hidden="true" />
+              </div>
+              <div
+                id="history-next"
+                className="btn btn-info"
+                disabled={noHistoryForward}
+                onClick={() => {
+                  this.getHistory('forward');
+                }}
+              >
+                <span className="glyphicon glyphicon-chevron-right" aria-hidden="true" />
+              </div>
+              <button
+                id="run"
+                type="submit"
+                className="btn btn-info pull-right has-spinner"
+                href="#"
+                onClick={this.handleSubmit}
+              >
+                <span className="spinner">
+                  <i className="fa fa-refresh fa-spin" />
+                </span>
+                Submit
+              </button>
+
+              <div className="form-check" style={{ marginTop: '5px' }}>
+                <input
+                  id="experimentalCheck"
+                  className="form-check-input"
+                  type="checkbox"
+                  onChange={this.toggleMvt.bind(this)}
+                />
+                <label
+                  className="form-check-label"
+                  htmlFor="experimentalCheck"
+                  style={{ marginLeft: '10px', userSelect: 'none', fontWeight: 200 }}
+                >
+                  Use MVT Tile Layers (For PostGIS 2.4+)
+                </label>
+              </div>
+
+              {notification}
+              <div id="download">
+                <h4>Download</h4>
+                <button id="geojson" className="btn btn-info pull-left">
+                  Geojson
+                </button>
+                <button id="csv" className="btn btn-info pull-left">
+                  CSV
+                </button>
+              </div>
+            </div>
+          </div>
+          <Map tiles={this.state.tiles} geoJson={this.state.geoJson} bounds={this.state.bounds} visible={this.state.view === 'map'} />
+          <Table rows={this.state.rows} featureCount={this.state.featureCount} visible={this.state.view === 'table'} />
         </div>
       </div>
     );
