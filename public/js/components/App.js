@@ -2,6 +2,9 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
+    const history = (localStorage.history) ? JSON.parse(localStorage.history) : [];
+    const historyIndex = 0; // get the first item as the default query
+
     this.state = {
       tiles: null,
       bounds: null,
@@ -9,14 +12,23 @@ class App extends React.Component {
       errorMessage: null,
       geoJson: null,
       useTiles: false,
+      history,
+      historyIndex,
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSQLUpdate = this.handleSQLUpdate.bind(this);
   }
 
+  componentDidMount() {
+    const { history, historyIndex } = this.state;
+    const historyQuery = history[historyIndex];
+
+    this.mirror.setValue(historyQuery);
+  }
+
   handleSubmit() {
-    const SQL = this.mirror.getSQL();
+    const SQL = this.mirror.getValue();
 
     const queryType = this.state.useTiles ? 'tiles/initialize' : 'sql';
 
@@ -49,14 +61,55 @@ class App extends React.Component {
           });
         }
       });
+
+    // add query to history
+
+    const { history } = this.state;
+
+    history.unshift(SQL);
+
+    if (history.length > 25) {
+      history.pop();
+    }
+
+    localStorage.history = JSON.stringify(history);
+
+    this.setState({ history });
   }
 
   handleSQLUpdate(SQL) {
     this.setState({ SQL });
   }
 
+  getHistory(type) {
+    const { history } = this.state;
+    let { historyIndex } = this.state;
+
+    if (type === 'backward') {
+      historyIndex += 1;
+    } else {
+      historyIndex -= 1;
+    }
+
+    const historyQuery = history[historyIndex];
+
+    this.setState({
+      historyIndex,
+    });
+
+    this.mirror.setValue(historyQuery);
+  }
+
   render() {
-    const { featureCount, errorMessage } = this.state;
+    const {
+      featureCount,
+      errorMessage,
+      history,
+      historyIndex,
+    } = this.state;
+
+    const noHistoryBack = historyIndex > (history.length - 2);
+    const noHistoryForward = historyIndex === 0;
 
     let notification = null;
 
@@ -84,10 +137,10 @@ class App extends React.Component {
                 this.mirror = ref;
               }}
             />
-            <div id="history-previous" className="btn btn-info disabled">
+            <div id="history-previous" className="btn btn-info" disabled={noHistoryBack} onClick={() => { this.getHistory('backward'); }}>
               <span className="glyphicon glyphicon-chevron-left" aria-hidden="true" />
             </div>
-            <div id="history-next" className="btn btn-info disabled">
+            <div id="history-next" className="btn btn-info" disabled={noHistoryForward} onClick={() => { this.getHistory('forward'); }}>
               <span className="glyphicon glyphicon-chevron-right" aria-hidden="true" />
             </div>
             <button

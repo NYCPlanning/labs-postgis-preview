@@ -15,11 +15,17 @@ class Mirror extends React.Component {
     this.editor.setCursor(2, 0);
   }
 
-  getSQL() {
+  getValue() {
     return this.editor.getDoc().getValue();
   }
 
+  setValue(value) {
+    return this.editor.getDoc().setValue(value);
+  }
+
   render() {
+    const { query } = this.props;
+
     return (
       <textarea id="sqlPane" className="form-control" value="/* Type your SQL here */" readOnly></textarea>
     )
