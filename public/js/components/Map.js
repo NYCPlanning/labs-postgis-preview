@@ -31,7 +31,6 @@ function removeLayers(map) {
 
 class Map extends React.Component {
   componentWillReceiveProps(nextProps) {
-    const { tiles, geoJson } = this.props;
     const { tiles: nextTiles } = nextProps;
     const { geoJson: nextgeoJson } = nextProps;
 
@@ -65,6 +64,12 @@ class Map extends React.Component {
         'fill-outline-color': 'white',
         'fill-opacity': 0.7,
       },
+    });
+
+    const bounds = turf.bbox(data);
+
+    this.map.fitBounds(bounds, {
+      padding: 80,
     });
   }
 
