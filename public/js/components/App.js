@@ -152,9 +152,17 @@ class App extends React.Component {
     return (
       <div className="react-root">
         <div className="navbar navbar-inverse navbar-fixed-top" role="navigation">
+          <a href="https://github.com/NYCPlanning/labs-postgis-preview">
+            <img
+              style={{
+                position: 'absolute', top: 0, left: 0, border: 0,
+              }}
+              src=" https://s3.amazonaws.com/github/ribbons/forkme_left_green_007200.png "
+              alt="Fork me on GitHub " />
+          </a>
           <div className="container-fluid">
             <div className="navbar-header">
-              <a className="navbar-brand" href="#">PostGIS Preview</a>
+              <a className="navbar-brand" href="#" style={{ marginLeft: '120px' }}>PostGIS Preview</a>
             </div>
             <div className="btn-group navbar-right" role="group" aria-label="...">
               <button
