@@ -17,7 +17,7 @@ function propertiesTable(properties) {
   return `<table border="1">${table.html()}</table>`;
 }
 
-function removeLayers(map) {
+function removeLayers(map, ctx) {
   if (
     map
       .getStyle()
@@ -27,9 +27,15 @@ function removeLayers(map) {
     map.removeLayer('postgis-preview');
     map.removeSource('postgis-preview');
   }
+  ctx.setState({ zoomedToBounds: false });
 }
 
 class Map extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { zoomedToBounds: false };
+  }
+
   componentWillReceiveProps(nextProps) {
     const { tiles: nextTiles } = nextProps;
     const { geoJson: nextgeoJson } = nextProps;
@@ -50,8 +56,17 @@ class Map extends React.Component {
     window.map = this.map;
   }
 
+  componentDidUpdate() {
+    if (!this.state.zoomedToBounds && this.props.bounds && this.map) {
+      this.map.fitBounds(this.props.bounds, {
+        padding: 80,
+      });
+      this.setState({ zoomedToBounds: true });
+    }
+  }
+
   addJsonLayer(data) {
-    removeLayers(this.map);
+    removeLayers(this.map, this);
     this.map.addLayer({
       id: 'postgis-preview',
       type: 'fill',
@@ -71,10 +86,11 @@ class Map extends React.Component {
     this.map.fitBounds(bounds, {
       padding: 80,
     });
+    this.setState({ zoomedToBounds: true });
   }
 
   addTileLayer(tiles) {
-    removeLayers(this.map);
+    removeLayers(this.map, this);
     this.map.addLayer({
       id: 'postgis-preview',
       type: 'fill',
@@ -94,6 +110,7 @@ class Map extends React.Component {
       this.map.fitBounds(this.props.bounds, {
         padding: 80,
       });
+      this.setState({ zoomedToBounds: true });
     }
   }
 
