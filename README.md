@@ -12,6 +12,7 @@ A lightweight node api and frontend for quickly previewing PostGIS queries. _Pul
 
 Take a look a the open issues. Come [chat on Gitter](<(https://gitter.im/postgis-preview/Lobby#)>) if you have questions. Create a Pull Request on the `develop` branch.
 
+
 ### Why
 
 Our team at the NYC Department of City Planning needed to be able to test out PostGIS queries in a local environment and iterate quickly. CartoDB provides this functionality, giving users a SQL pane and a map view to quickly see the geometries returned from the database (This UI and SQL preview workflow are inspired by the CartoDB editor)
@@ -32,15 +33,19 @@ The frontend is a simple Bootstrap layout with a Leaflet map, CartoDB basemaps, 
 
 - Clone this repo
 - Have a PostGIS instance running somewhere that the node app can talk to
-- Edit `.env.sample` to include your `DATABASE_URL`, rename it `.env`
-- Install dependencies `npm install`
-- Run the express app `node server.js`
+- Create a `.env` file in the root of the repo based on `.env-sample`, setting `DATABASE_URL` with a connection string for your database (`DATABASE_URL=postgres://user:password@host:port/database`)
+- Install dependencies `yarn install`
+- Run the express app `yarn start`, or `yarn devstart` if you are developing and want the server to restart on file changes.
 - Load the frontend `http://localhost:4000`
-- Query like a boss
+- Query like a boss, see your geoms on the map!
+
+### Contributing
+_Pull Requests Welcomed!_  Take a look at the [open issues](https://github.com/chriswhong/postgis-preview/issues)
+[Join the conversation on Gitter](https://gitter.im/postgis-preview/Lobby#)
 
 ### Notes
 
-- PostGIS preview expects your geometry column to be called `geom`, and that it contains WGS84 geometries. See [#17](https://github.com/chriswhong/postgis-preview/pull/17) for some discussion on how to allow for other geom column names and SRIDs.
+- PostGIS preview expects your geometry column to be called `geom`, and that it contains WGS84 geometries.
 
 #### Optional Feature Requirements
 
