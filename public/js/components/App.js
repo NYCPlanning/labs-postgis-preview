@@ -2,7 +2,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
-    const history = (localStorage.history) ? JSON.parse(localStorage.history) : [];
+    const history = localStorage.history ? JSON.parse(localStorage.history) : [];
     const historyIndex = 0; // get the first item as the default query
 
     this.state = {
@@ -81,6 +81,14 @@ class App extends React.Component {
     this.setState({ SQL });
   }
 
+  toggleMvt(e) {
+    if (e.target.checked) {
+      this.setState({ useTiles: true, geoJson: null });
+    } else {
+      this.setState({ useTiles: false, tiles: null, bounds: null });
+    }
+  }
+
   getHistory(type) {
     const { history } = this.state;
     let { historyIndex } = this.state;
@@ -102,13 +110,10 @@ class App extends React.Component {
 
   render() {
     const {
-      featureCount,
-      errorMessage,
-      history,
-      historyIndex,
+      featureCount, errorMessage, history, historyIndex,
     } = this.state;
 
-    const noHistoryBack = historyIndex > (history.length - 2);
+    const noHistoryBack = historyIndex > history.length - 2;
     const noHistoryForward = historyIndex === 0;
 
     let notification = null;
@@ -125,7 +130,11 @@ class App extends React.Component {
         messageText = errorMessage;
       }
 
-      notification = (<div id="notification" className={`alert alert-${status}`}>{messageText}</div>);
+      notification = (
+        <div id="notification" className={`alert alert-${status}`}>
+          {messageText}
+        </div>
+      );
     }
 
     return (
@@ -137,10 +146,24 @@ class App extends React.Component {
                 this.mirror = ref;
               }}
             />
-            <div id="history-previous" className="btn btn-info" disabled={noHistoryBack} onClick={() => { this.getHistory('backward'); }}>
+            <div
+              id="history-previous"
+              className="btn btn-info"
+              disabled={noHistoryBack}
+              onClick={() => {
+                this.getHistory('backward');
+              }}
+            >
               <span className="glyphicon glyphicon-chevron-left" aria-hidden="true" />
             </div>
-            <div id="history-next" className="btn btn-info" disabled={noHistoryForward} onClick={() => { this.getHistory('forward'); }}>
+            <div
+              id="history-next"
+              className="btn btn-info"
+              disabled={noHistoryForward}
+              onClick={() => {
+                this.getHistory('forward');
+              }}
+            >
               <span className="glyphicon glyphicon-chevron-right" aria-hidden="true" />
             </div>
             <button
@@ -155,6 +178,23 @@ class App extends React.Component {
               </span>
               Submit
             </button>
+
+            <div className="form-check" style={{ marginTop: '5px' }}>
+              <input
+                id="experimentalCheck"
+                className="form-check-input"
+                type="checkbox"
+                onChange={this.toggleMvt.bind(this)}
+              />
+              <label
+                className="form-check-label"
+                htmlFor="experimentalCheck"
+                style={{ marginLeft: '10px', userSelect: 'none', fontWeight: 200 }}
+              >
+                Use MVT Tile Layers (For PostGIS 2.4+)
+              </label>
+            </div>
+
             {notification}
             <div id="download">
               <h4>Download</h4>
