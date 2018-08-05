@@ -1,4 +1,4 @@
-html, body, #root, #container {
+html, body, #root, #container, .react-root {
   height: 100%;
   width: 100%;
   overflow: hidden;
