@@ -141,21 +141,6 @@ class App extends React.Component {
       <div id="container">
         <div id="sidebar">
           <div className="col-md-12">
-            <div className="form-check" style={{ marginTop: '5px' }}>
-              <input
-                id="experimentalCheck"
-                className="form-check-input"
-                type="checkbox"
-                onChange={this.toggleMvt.bind(this)}
-              />
-              <label
-                class="form-check-label"
-                for="experimentalCheck"
-                style={{ marginLeft: '10px', userSelect: 'none', fontWeight: 200 }}
-              >
-                Use MVT Tile Layers (For PostGIS 2.4+)
-              </label>
-            </div>
             <Mirror
               ref={(ref) => {
                 this.mirror = ref;
@@ -193,6 +178,23 @@ class App extends React.Component {
               </span>
               Submit
             </button>
+
+            <div className="form-check" style={{ marginTop: '5px' }}>
+              <input
+                id="experimentalCheck"
+                className="form-check-input"
+                type="checkbox"
+                onChange={this.toggleMvt.bind(this)}
+              />
+              <label
+                className="form-check-label"
+                htmlFor="experimentalCheck"
+                style={{ marginLeft: '10px', userSelect: 'none', fontWeight: 200 }}
+              >
+                Use MVT Tile Layers (For PostGIS 2.4+)
+              </label>
+            </div>
+
             {notification}
             <div id="download">
               <h4>Download</h4>
