@@ -23,6 +23,8 @@ class Table extends React.Component {
         <ReactTable
           data={data}
           columns={columns}
+          defaultPageSize={10}
+          className="-striped -highlight"
         />
       </div>
     );
