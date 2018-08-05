@@ -20,8 +20,6 @@ class App extends React.Component {
 
     const queryType = this.state.useTiles ? 'tiles/initialize' : 'sql';
 
-
-
     fetch(`/${queryType}?q=${encodeURIComponent(SQL)}`)
       .then(res => res.json())
       .then((json) => {
@@ -35,8 +33,11 @@ class App extends React.Component {
             });
           } else {
             const geoJson = json;
+            const featureCount = geoJson.features.length;
+
             this.setState({
               geoJson,
+              featureCount,
             });
           }
         } else {
@@ -65,7 +66,7 @@ class App extends React.Component {
 
       if (featureCount) {
         status = 'success';
-        messageText = `${featureCount} features returned`;
+        messageText = `${featureCount} feature${featureCount > 0 ? 's' : ''} returned`;
       } else {
         status = 'danger';
         messageText = errorMessage;
