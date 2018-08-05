@@ -1,1 +1,2 @@
-SELECT count(*) FROM (${q^}) x
+WITH query AS (${q^})
+SELECT count(*) FROM query

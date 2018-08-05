@@ -1,3 +1,4 @@
+WITH query AS (${q^})
 SELECT
 ARRAY[
   ARRAY[
@@ -11,7 +12,5 @@ ARRAY[
 ] as bbox
 FROM (
   SELECT ST_Extent(geom) AS bbox
-  FROM (
-    ${q^}
-  ) x
+  FROM query
 ) y
