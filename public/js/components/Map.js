@@ -90,9 +90,11 @@ class Map extends React.Component {
       },
     });
 
-    this.map.fitBounds(bounds, {
-      padding: 80,
-    });
+    if (this.props.bounds) {
+      this.map.fitBounds(this.props.bounds, {
+        padding: 80,
+      });
+    }
   }
 
   render() {
