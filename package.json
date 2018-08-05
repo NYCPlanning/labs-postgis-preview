@@ -4,20 +4,29 @@
   "description": "A lightweight node api and frontend for quicky previewing PostGIS queries",
   "main": "config.js",
   "dependencies": {
-    "async": "~1.2.0",
+    "async": "~2.6.1",
     "dbgeo": "^1.0.0",
-    "dotenv": "^2.0.0",
+    "dotenv": "^6.0.0",
     "express": "^4.13.4",
-    "jsonexport": "^1.1.0",
-    "pg-promise": "^5.6.4",
-    "topojson": "~1.6.14",
-    "wellknown": "~0.3.0",
-    "wkx": "^0.2.0"
+    "jsonexport": "^2.2.1",
+    "node-cache": "^4.2.0",
+    "pg-promise": "^8.4.5",
+    "shortid": "^2.2.8",
+    "sphericalmercator": "^1.0.5",
+    "topojson": "~3.0.2",
+    "wellknown": "~0.5.0",
+    "wkx": "^0.4.5"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "babel-eslint": "^8.2.6",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^13.0.0",
+    "eslint-plugin-import": "^2.12.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "devstart": "nodemon server.js"
   },
   "author": "",
   "license": "ISC"

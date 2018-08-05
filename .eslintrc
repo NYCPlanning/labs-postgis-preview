@@ -1,0 +1,25 @@
+{
+  "parser": "babel-eslint",
+  "extends": "airbnb-base",
+  "rules": {
+    "max-len": [0, 120, 2, { "ignoreComments": true }],
+    "no-param-reassign": [0],
+    "radix": [0],
+    "camelcase": [0]
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "mocha": true
+  },
+  "globals": {
+    "L": true,
+    "$": true,
+    "CodeMirror": true,
+    "editor": true,
+    "omnivore": true,
+    "React": true,
+    "ReactDOM": true,
+    "mapboxgl": true
+  }
+}
