@@ -14,6 +14,7 @@ class App extends React.Component {
       useTiles: false,
       history,
       historyIndex,
+      rows: null,
       view: 'map',
     };
 
@@ -39,18 +40,23 @@ class App extends React.Component {
       .then((json) => {
         if (!json.error) {
           if (this.state.useTiles) {
-            const { tiles, bounds, featureCount } = json;
+            const { tiles, bounds, rows } = json;
             this.setState({
               tiles,
               bounds,
-              featureCount,
+              rows,
+              featureCount: rows.length,
             });
           } else {
             const geoJson = json;
             const featureCount = geoJson.features.length;
 
+            // map features to rows array for use in Table component
+            const rows = geoJson.features.map(feature => feature.properties);
+
             this.setState({
               geoJson,
+              rows,
               featureCount,
             });
           }
@@ -238,7 +244,7 @@ class App extends React.Component {
             </div>
           </div>
           <Map tiles={this.state.tiles} geoJson={this.state.geoJson} bounds={this.state.bounds} visible={this.state.view === 'map'} />
-          <Table geoJson={this.state.geoJson} featureCount={this.state.featureCount} visible={this.state.view === 'table'} />
+          <Table rows={this.state.rows} featureCount={this.state.featureCount} visible={this.state.view === 'table'} />
         </div>
       </div>
     );

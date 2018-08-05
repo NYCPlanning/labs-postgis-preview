@@ -1,16 +1,14 @@
 class Table extends React.Component {
 
   render() {
-    const { visible, geoJson } = this.props;
+    const { visible, rows } = this.props;
 
-    if (!geoJson) return (<div>No features selected</div>);
+    if (!rows) return (<div>No features selected</div>);
 
 
     const ReactTable = window.ReactTable.default; // eslint-disable-line
 
-    const data = geoJson.features.map(feature => feature.properties);
-
-    const columns = Object.keys(geoJson.features[0].properties)
+    const columns = Object.keys(rows[0])
       .map(property => ({
         Header: property,
         accessor: property,
@@ -21,7 +19,7 @@ class Table extends React.Component {
     return (
       <div id="table" style={{ display }}>
         <ReactTable
-          data={data}
+          data={rows}
           columns={columns}
           defaultPageSize={10}
           className="-striped -highlight"

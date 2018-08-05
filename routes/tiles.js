@@ -32,15 +32,22 @@ router.get('/initialize', async (req, res) => {
         error: e.message,
       });
     });
-  const count = await app.db.one(featureCountQuery, { q })
+
+  let rows = await app.db.any(q)
     .catch((e) => {
       console.error(e.message);
     });
 
+  // remove geom
+  rows = rows.map((row) => {
+    delete row.geom;
+    return row;
+  });
+
   res.send({
     tiles: [`http://localhost:${process.env.PORT}/tiles/${tileId}/{z}/{x}/{y}.mvt`],
     bounds: bbox.bbox,
-    featureCount: count.count,
+    rows,
   });
 });
 
