@@ -17,8 +17,6 @@ const getQueryFile = (file) => {
 const generateVectorTile = getQueryFile('generate-vector-tile.sql');
 
 const boundingBoxQuery = getQueryFile('bounding-box-query.sql');
-const featureCountQuery = getQueryFile('feature-count-query.sql');
-
 
 router.get('/initialize', async (req, res) => {
   const { app, query } = req;
