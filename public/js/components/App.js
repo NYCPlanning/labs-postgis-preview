@@ -7,6 +7,8 @@ class App extends React.Component {
       bounds: null,
       featureCount: null,
       errorMessage: null,
+      geoJson: null,
+      useTiles: false,
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -16,16 +18,27 @@ class App extends React.Component {
   handleSubmit() {
     const SQL = this.mirror.getSQL();
 
-    fetch(`/tiles/initialize?q=${encodeURIComponent(SQL)}`)
+    const queryType = this.state.useTiles ? 'tiles/initialize' : 'sql';
+
+
+
+    fetch(`/${queryType}?q=${encodeURIComponent(SQL)}`)
       .then(res => res.json())
       .then((json) => {
         if (!json.error) {
-          const { tiles, bounds, featureCount } = json;
-          this.setState({
-            tiles,
-            bounds,
-            featureCount,
-          });
+          if (this.state.useTiles) {
+            const { tiles, bounds, featureCount } = json;
+            this.setState({
+              tiles,
+              bounds,
+              featureCount,
+            });
+          } else {
+            const geoJson = json;
+            this.setState({
+              geoJson,
+            });
+          }
         } else {
           this.setState({
             tiles: null,
@@ -65,37 +78,47 @@ class App extends React.Component {
       <div id="container">
         <div id="sidebar">
           <div className="col-md-12">
-            <Mirror ref={(ref) => { this.mirror = ref; }}/>
+            <Mirror
+              ref={(ref) => {
+                this.mirror = ref;
+              }}
+            />
             <div id="history-previous" className="btn btn-info disabled">
-              <span className="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+              <span className="glyphicon glyphicon-chevron-left" aria-hidden="true" />
             </div>
             <div id="history-next" className="btn btn-info disabled">
-              <span className="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+              <span className="glyphicon glyphicon-chevron-right" aria-hidden="true" />
             </div>
-            <button id="run" type="submit" className="btn btn-info pull-right has-spinner" href="#" onClick={this.handleSubmit}>
-              <span className="spinner"><i className="fa fa-refresh fa-spin"></i></span>
+            <button
+              id="run"
+              type="submit"
+              className="btn btn-info pull-right has-spinner"
+              href="#"
+              onClick={this.handleSubmit}
+            >
+              <span className="spinner">
+                <i className="fa fa-refresh fa-spin" />
+              </span>
               Submit
             </button>
             {notification}
             <div id="download">
               <h4>Download</h4>
-              <button id="geojson" className="btn btn-info pull-left">Geojson</button>
-              <button id="csv" className="btn btn-info pull-left">CSV</button>
+              <button id="geojson" className="btn btn-info pull-left">
+                Geojson
+              </button>
+              <button id="csv" className="btn btn-info pull-left">
+                CSV
+              </button>
             </div>
           </div>
-          </div>
-          <Map tiles={this.state.tiles} bounds={this.state.bounds}/>
-          <div id="table">
+        </div>
+        <Map tiles={this.state.tiles} geoJson={this.state.geoJson} bounds={this.state.bounds} />
+        <div id="table">
           <table id="example" className="table table-striped table-bordered" cellSpacing="0">
-            <thead>
-
-            </thead>
-            <tfoot>
-
-            </tfoot>
-            <tbody>
-
-            </tbody>
+            <thead />
+            <tfoot />
+            <tbody />
           </table>
         </div>
       </div>
@@ -103,7 +126,4 @@ class App extends React.Component {
   }
 }
 
-ReactDOM.render(
-    <App />,
-    document.getElementById('root'),
-);
+ReactDOM.render(<App />, document.getElementById('root'));

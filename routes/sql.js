@@ -10,7 +10,7 @@ function jsonExport(data) {
     delete row.geom;
   });
 
-  return new Promise(((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     jsonexport(data, (err, csv) => {
       if (err) {
         reject(err);
@@ -18,21 +18,25 @@ function jsonExport(data) {
         resolve(csv);
       }
     });
-  }));
+  });
 }
 
-function dbGeoParse(data, format) {
-  return new Promise(((resolve, reject) => {
-    dbgeo.parse(data, {
-      outputFormat: format,
-    }, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  }));
+function dbGeoParse(data) {
+  return new Promise((resolve, reject) => {
+    dbgeo.parse(
+      data,
+      {
+        outputFormat: 'geojson',
+      },
+      (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      },
+    );
+  });
 }
 
 // expose sql endpoint, grab query as URL parameter and send it to the database
@@ -43,8 +47,10 @@ router.get('/', (req, res) => {
   console.log(`Executing SQL: ${sql}`, format); // eslint-disable-line
 
   // query using pg-promise
-  app.db.any(sql)
-    .then((data) => { // use dbgeo to convert WKB from PostGIS into topojson
+  app.db
+    .any(sql)
+    .then((data) => {
+      // use dbgeo to convert WKB from PostGIS into topojson
       switch (format) {
         case 'csv':
           return jsonExport(data).then((csv) => {
@@ -53,7 +59,7 @@ router.get('/', (req, res) => {
             return csv;
           });
         case 'geojson':
-          return dbGeoParse(data, format).then((geojson) => {
+          return dbGeoParse(data).then((geojson) => {
             res.setHeader('Content-disposition', 'attachment; filename=query.geojson');
             res.setHeader('Content-Type', 'application/json');
             return geojson;
@@ -65,7 +71,8 @@ router.get('/', (req, res) => {
     .then((data) => {
       res.send(data);
     })
-    .catch((err) => { // send the error message if the query didn't work
+    .catch((err) => {
+      // send the error message if the query didn't work
       const msg = err.message || err;
       console.log('ERROR:', msg); // eslint-disable-line
       res.send({
