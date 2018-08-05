@@ -1,20 +1,55 @@
-function propertiesTable(properties) {
-  if (!properties) {
-    properties = {};
+function getLayerConfig(data) {
+  if (data.features[0].geometry.type === 'Polygon') {
+    return {
+      id: 'postgis-preview',
+      type: 'fill',
+      source: {
+        type: 'geojson',
+        data,
+      },
+      paint: {
+        'fill-color': 'steelblue',
+        'fill-outline-color': 'white',
+        'fill-opacity': 0.7,
+      },
+    };
   }
 
-  const table = $('<table><tr><th>Column</th><th>Value</th></tr></table>');
-  const keys = Object.keys(properties);
-  const banProperties = ['geom'];
-  for (let k = 0; k < keys.length; k += 1) {
-    if (banProperties.indexOf(keys[k]) === -1) {
-      const row = $('<tr></tr>');
-      row.append($('<td></td>').text(keys[k]));
-      row.append($('<td></td>').text(properties[keys[k]]));
-      table.append(row);
-    }
+  if (data.features[0].geometry.type === 'LineString') {
+    return {
+      id: 'postgis-preview',
+      type: 'line',
+      source: {
+        type: 'geojson',
+        data,
+      },
+      paint: {
+        'line-color': 'steelblue',
+        'line-width': '5',
+        'line-opacity': 0.7,
+      },
+    };
   }
-  return `<table border="1">${table.html()}</table>`;
+
+  if (data.features[0].geometry.type === 'Point') {
+    return {
+      id: 'postgis-preview',
+      type: 'circle',
+      source: {
+        type: 'geojson',
+        data,
+      },
+      paint: {
+        'circle-radius': 5,
+        'circle-color': 'steelblue',
+        'circle-opacity': 0.7,
+        'circle-stroke-width': 2,
+        'circle-stroke-color': '#FFFFFF',
+      },
+    };
+  }
+
+  return null;
 }
 
 function removeLayers(map, ctx) {
@@ -67,19 +102,8 @@ class Map extends React.Component {
 
   addJsonLayer(data) {
     removeLayers(this.map, this);
-    this.map.addLayer({
-      id: 'postgis-preview',
-      type: 'fill',
-      source: {
-        type: 'geojson',
-        data,
-      },
-      paint: {
-        'fill-color': 'steelblue',
-        'fill-outline-color': 'white',
-        'fill-opacity': 0.7,
-      },
-    });
+    const layerConfig = getLayerConfig(data);
+    this.map.addLayer(layerConfig);
 
     const bounds = turf.bbox(data);
 
