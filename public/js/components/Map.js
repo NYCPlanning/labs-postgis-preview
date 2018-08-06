@@ -1,12 +1,33 @@
-function getLayerConfig(data) {
-  if (data.features[0].geometry.type === 'Polygon') {
-    return {
-      id: 'postgis-preview',
-      type: 'fill',
+function getLayerConfig(data, geometryType) {
+  // build mapboxGL layer with source, based on data type and geometry type
+
+  let layerConfig = {
+    id: 'postgis-preview',
+  };
+
+  if (data.features) { // check for geoJson
+    layerConfig = {
+      ...layerConfig,
       source: {
         type: 'geojson',
         data,
       },
+    };
+  } else { // else it's an array of MVT templates
+    layerConfig = {
+      ...layerConfig,
+      source: {
+        type: 'vector',
+        tiles: data,
+      },
+      'source-layer': 'layer0',
+    };
+  }
+
+  if (['Polygon', 'MultiPolygon'].includes(geometryType)) {
+    layerConfig = {
+      ...layerConfig,
+      type: 'fill',
       paint: {
         'fill-color': 'steelblue',
         'fill-outline-color': 'white',
@@ -15,14 +36,10 @@ function getLayerConfig(data) {
     };
   }
 
-  if (data.features[0].geometry.type === 'LineString') {
-    return {
-      id: 'postgis-preview',
+  if (['LineString', 'MultiLineString'].includes(geometryType)) {
+    layerConfig = {
+      ...layerConfig,
       type: 'line',
-      source: {
-        type: 'geojson',
-        data,
-      },
       paint: {
         'line-color': 'steelblue',
         'line-width': '5',
@@ -31,14 +48,10 @@ function getLayerConfig(data) {
     };
   }
 
-  if (data.features[0].geometry.type === 'Point') {
-    return {
-      id: 'postgis-preview',
+  if (['Point', 'MultiPoint'].includes(geometryType)) {
+    layerConfig = {
+      ...layerConfig,
       type: 'circle',
-      source: {
-        type: 'geojson',
-        data,
-      },
       paint: {
         'circle-radius': 5,
         'circle-color': 'steelblue',
@@ -49,7 +62,7 @@ function getLayerConfig(data) {
     };
   }
 
-  return null;
+  return layerConfig;
 }
 
 function removeLayers(map, ctx) {
@@ -72,11 +85,14 @@ class Map extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { tiles: nextTiles } = nextProps;
-    const { geoJson: nextgeoJson } = nextProps;
+    const {
+      tiles: nextTiles,
+      geoJson: nextgeoJson,
+      geometryType: nextGeometryType,
+    } = nextProps;
 
-    if (nextTiles) this.addTileLayer(nextTiles);
-    if (nextgeoJson) this.addJsonLayer(nextgeoJson);
+    if (nextTiles) this.addTileLayer(nextTiles, nextGeometryType);
+    if (nextgeoJson) this.addJsonLayer(nextgeoJson, nextGeometryType);
   }
 
   componentDidMount() {
@@ -100,12 +116,12 @@ class Map extends React.Component {
     }
   }
 
-  addJsonLayer(data) {
+  addJsonLayer(geoJson, geometryType) {
     removeLayers(this.map, this);
-    const layerConfig = getLayerConfig(data);
+    const layerConfig = getLayerConfig(geoJson, geometryType);
     this.map.addLayer(layerConfig);
 
-    const bounds = turf.bbox(data);
+    const bounds = turf.bbox(geoJson);
 
     this.map.fitBounds(bounds, {
       padding: 80,
@@ -113,22 +129,10 @@ class Map extends React.Component {
     this.setState({ zoomedToBounds: true });
   }
 
-  addTileLayer(tiles) {
+  addTileLayer(tiles, geometryType) {
+    const layerConfig = getLayerConfig(tiles, geometryType);
     removeLayers(this.map, this);
-    this.map.addLayer({
-      id: 'postgis-preview',
-      type: 'fill',
-      source: {
-        type: 'vector',
-        tiles,
-      },
-      'source-layer': 'layer0',
-      paint: {
-        'fill-color': 'steelblue',
-        'fill-outline-color': 'white',
-        'fill-opacity': 0.7,
-      },
-    });
+    this.map.addLayer(layerConfig);
 
     if (this.props.bounds) {
       this.map.fitBounds(this.props.bounds, {
