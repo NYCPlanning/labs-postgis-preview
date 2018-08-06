@@ -1,20 +1,68 @@
-function propertiesTable(properties) {
-  if (!properties) {
-    properties = {};
+function getLayerConfig(data, geometryType) {
+  // build mapboxGL layer with source, based on data type and geometry type
+
+  let layerConfig = {
+    id: 'postgis-preview',
+  };
+
+  if (data.features) { // check for geoJson
+    layerConfig = {
+      ...layerConfig,
+      source: {
+        type: 'geojson',
+        data,
+      },
+    };
+  } else { // else it's an array of MVT templates
+    layerConfig = {
+      ...layerConfig,
+      source: {
+        type: 'vector',
+        tiles: data,
+      },
+      'source-layer': 'layer0',
+    };
   }
 
-  const table = $('<table><tr><th>Column</th><th>Value</th></tr></table>');
-  const keys = Object.keys(properties);
-  const banProperties = ['geom'];
-  for (let k = 0; k < keys.length; k += 1) {
-    if (banProperties.indexOf(keys[k]) === -1) {
-      const row = $('<tr></tr>');
-      row.append($('<td></td>').text(keys[k]));
-      row.append($('<td></td>').text(properties[keys[k]]));
-      table.append(row);
-    }
+  if (['Polygon', 'MultiPolygon'].includes(geometryType)) {
+    layerConfig = {
+      ...layerConfig,
+      type: 'fill',
+      paint: {
+        'fill-color': 'steelblue',
+        'fill-outline-color': 'white',
+        'fill-opacity': 0.7,
+      },
+    };
   }
-  return `<table border="1">${table.html()}</table>`;
+
+  if (['LineString', 'MultiLineString'].includes(geometryType)) {
+    layerConfig = {
+      ...layerConfig,
+      type: 'line',
+      paint: {
+        'line-color': 'steelblue',
+        'line-width': '5',
+        'line-opacity': 0.7,
+      },
+    };
+  }
+
+  if (['Point', 'MultiPoint'].includes(geometryType)) {
+    layerConfig = {
+      ...layerConfig,
+      type: 'circle',
+      paint: {
+        'circle-radius': 5,
+        'circle-color': 'steelblue',
+        'circle-opacity': 0.7,
+        'circle-stroke-width': 2,
+        'circle-stroke-color': '#FFFFFF',
+      },
+    };
+  }
+
+  return layerConfig;
 }
 
 function removeLayers(map, ctx) {
@@ -37,11 +85,14 @@ class Map extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { tiles: nextTiles } = nextProps;
-    const { geoJson: nextgeoJson } = nextProps;
+    const {
+      tiles: nextTiles,
+      geoJson: nextgeoJson,
+      geometryType: nextGeometryType,
+    } = nextProps;
 
-    if (nextTiles) this.addTileLayer(nextTiles);
-    if (nextgeoJson) this.addJsonLayer(nextgeoJson);
+    if (nextTiles) this.addTileLayer(nextTiles, nextGeometryType);
+    if (nextgeoJson) this.addJsonLayer(nextgeoJson, nextGeometryType);
   }
 
   componentDidMount() {
@@ -65,23 +116,12 @@ class Map extends React.Component {
     }
   }
 
-  addJsonLayer(data) {
+  addJsonLayer(geoJson, geometryType) {
     removeLayers(this.map, this);
-    this.map.addLayer({
-      id: 'postgis-preview',
-      type: 'fill',
-      source: {
-        type: 'geojson',
-        data,
-      },
-      paint: {
-        'fill-color': 'steelblue',
-        'fill-outline-color': 'white',
-        'fill-opacity': 0.7,
-      },
-    });
+    const layerConfig = getLayerConfig(geoJson, geometryType);
+    this.map.addLayer(layerConfig);
 
-    const bounds = turf.bbox(data);
+    const bounds = turf.bbox(geoJson);
 
     this.map.fitBounds(bounds, {
       padding: 80,
@@ -89,22 +129,10 @@ class Map extends React.Component {
     this.setState({ zoomedToBounds: true });
   }
 
-  addTileLayer(tiles) {
+  addTileLayer(tiles, geometryType) {
+    const layerConfig = getLayerConfig(tiles, geometryType);
     removeLayers(this.map, this);
-    this.map.addLayer({
-      id: 'postgis-preview',
-      type: 'fill',
-      source: {
-        type: 'vector',
-        tiles,
-      },
-      'source-layer': 'layer0',
-      paint: {
-        'fill-color': 'steelblue',
-        'fill-outline-color': 'white',
-        'fill-opacity': 0.7,
-      },
-    });
+    this.map.addLayer(layerConfig);
 
     if (this.props.bounds) {
       this.map.fitBounds(this.props.bounds, {

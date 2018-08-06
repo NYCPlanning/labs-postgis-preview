@@ -16,6 +16,7 @@ class App extends React.Component {
       historyIndex,
       rows: null,
       view: 'map',
+      geometryType: null,
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -40,16 +41,26 @@ class App extends React.Component {
       .then((json) => {
         if (!json.error) {
           if (this.state.useTiles) {
-            const { tiles, bounds, rows } = json;
+            const {
+              tiles,
+              bounds,
+              rows,
+              geometryType,
+            } = json;
+
+            const featureCount = rows.length;
+
             this.setState({
               tiles,
               bounds,
               rows,
-              featureCount: rows.length,
+              featureCount,
+              geometryType,
             });
           } else {
             const geoJson = json;
             const featureCount = geoJson.features.length;
+            const geometryType = geoJson.features[0].geometry.type;
 
             // map features to rows array for use in Table component
             const rows = geoJson.features.map(feature => feature.properties);
@@ -58,6 +69,7 @@ class App extends React.Component {
               geoJson,
               rows,
               featureCount,
+              geometryType,
             });
           }
         } else {
@@ -243,7 +255,13 @@ class App extends React.Component {
               </div>
             </div>
           </div>
-          <Map tiles={this.state.tiles} geoJson={this.state.geoJson} bounds={this.state.bounds} visible={this.state.view === 'map'} />
+          <Map
+            tiles={this.state.tiles}
+            geoJson={this.state.geoJson}
+            bounds={this.state.bounds}
+            visible={this.state.view === 'map'}
+            geometryType={this.state.geometryType}
+          />
           <Table rows={this.state.rows} featureCount={this.state.featureCount} visible={this.state.view === 'table'} />
         </div>
       </div>

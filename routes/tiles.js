@@ -3,6 +3,8 @@ const SphericalMercator = require('sphericalmercator');
 const path = require('path');
 const pgp = require('pg-promise');
 const shortid = require('shortid');
+const { Buffer } = require('buffer');
+const wkx = require('wkx');
 
 const router = express.Router();
 const mercator = new SphericalMercator({
@@ -36,6 +38,11 @@ router.get('/initialize', async (req, res) => {
       console.error(e.message);
     });
 
+  const wkbBuffer = Buffer.from(rows[0].geom, 'hex');
+  const geometry = wkx.Geometry.parse(wkbBuffer).toGeoJSON();
+  const geometryType = geometry.type;
+
+
   // remove geom
   rows = rows.map((row) => {
     delete row.geom;
@@ -46,6 +53,7 @@ router.get('/initialize', async (req, res) => {
     tiles: [`http://localhost:${process.env.PORT}/tiles/${tileId}/{z}/{x}/{y}.mvt`],
     bounds: bbox.bbox,
     rows,
+    geometryType,
   });
 });
 
