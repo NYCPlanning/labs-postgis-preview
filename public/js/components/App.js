@@ -60,7 +60,15 @@ class App extends React.Component {
           } else {
             const geoJson = json;
             const featureCount = geoJson.features.length;
-            const geometryType = geoJson.features[0].geometry.type;
+            
+            // Get the geometry type. Make sure we only look at features with a geometry
+            const geometryType = geoJson.features.filter(feature => {
+              if (feature.geometry && feature.geometry.type) {
+                return feature
+              }
+            }).map(feature => {
+              return feature.geometry.type
+            })[0];
 
             // map features to rows array for use in Table component
             const rows = geoJson.features.map(feature => feature.properties);
