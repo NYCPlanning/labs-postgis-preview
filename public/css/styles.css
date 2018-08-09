@@ -13,6 +13,9 @@ body {
   position: relative;
   display: block;
 }
+#table {
+  overflow-y: scroll;
+}
 #sidebar {
   width: 300px;
   height: 100%;
