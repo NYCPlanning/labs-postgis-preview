@@ -119,7 +119,7 @@ class Map extends React.Component {
   addJsonLayer(geoJson, geometryType) {
     removeLayers(this.map, this);
     const layerConfig = getLayerConfig(geoJson, geometryType);
-    this.map.addLayer(layerConfig);
+    this.map.addLayer(layerConfig, 'highway_name_other');
 
     const bounds = turf.bbox(geoJson);
 
@@ -132,7 +132,7 @@ class Map extends React.Component {
   addTileLayer(tiles, geometryType) {
     const layerConfig = getLayerConfig(tiles, geometryType);
     removeLayers(this.map, this);
-    this.map.addLayer(layerConfig);
+    this.map.addLayer(layerConfig, 'highway_name_other');
 
     if (this.props.bounds) {
       this.map.fitBounds(this.props.bounds, {
