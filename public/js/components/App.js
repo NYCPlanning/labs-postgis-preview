@@ -19,8 +19,8 @@ class App extends React.Component {
       geometryType: null,
     };
 
+    this.toggleMvt = this.toggleMvt.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleSQLUpdate = this.handleSQLUpdate.bind(this);
     this.handleViewToggle = this.handleViewToggle.bind(this);
   }
 
@@ -31,16 +31,47 @@ class App extends React.Component {
     this.mirror.setValue(historyQuery);
   }
 
+  getHistory(type) {
+    const { history } = this.state;
+    let { historyIndex } = this.state;
+
+    if (type === 'backward') {
+      historyIndex += 1;
+    } else {
+      historyIndex -= 1;
+    }
+
+    const historyQuery = history[historyIndex];
+
+    this.setState({
+      historyIndex,
+    });
+
+    this.mirror.setValue(historyQuery);
+  }
+
+  toggleMvt(e) {
+    if (e.target.checked) {
+      this.setState({ useTiles: true, geoJson: null });
+    } else {
+      this.setState({ useTiles: false, tiles: null, bounds: null });
+    }
+  }
+
+  handleViewToggle(view) {
+    this.setState({ view });
+  }
+
   handleSubmit() {
     const SQL = this.mirror.getValue();
-
-    const queryType = this.state.useTiles ? 'tiles/initialize' : 'sql';
+    const { useTiles } = this.state;
+    const queryType = useTiles ? 'tiles/initialize' : 'sql';
 
     fetch(`/${queryType}?q=${encodeURIComponent(SQL)}`)
       .then(res => res.json())
       .then((json) => {
         if (!json.error) {
-          if (this.state.useTiles) {
+          if (useTiles) {
             const {
               tiles,
               bounds,
@@ -60,15 +91,14 @@ class App extends React.Component {
           } else {
             const geoJson = json;
             const featureCount = geoJson.features.length;
-            
+
             // Get the geometry type. Make sure we only look at features with a geometry
-            const geometryType = geoJson.features.filter(feature => {
+            const geometryType = geoJson.features.filter((feature) => {
               if (feature.geometry && feature.geometry.type) {
-                return feature
+                return feature;
               }
-            }).map(feature => {
-              return feature.geometry.type
-            })[0];
+              return null;
+            }).map(feature => feature.geometry.type)[0];
 
             // map features to rows array for use in Table component
             const rows = geoJson.features.map(feature => feature.properties);
@@ -105,44 +135,18 @@ class App extends React.Component {
     this.setState({ history });
   }
 
-  handleSQLUpdate(SQL) {
-    this.setState({ SQL });
-  }
-
-  toggleMvt(e) {
-    if (e.target.checked) {
-      this.setState({ useTiles: true, geoJson: null });
-    } else {
-      this.setState({ useTiles: false, tiles: null, bounds: null });
-    }
-  }
-
-  handleViewToggle(view) {
-    this.setState({ view });
-  }
-
-  getHistory(type) {
-    const { history } = this.state;
-    let { historyIndex } = this.state;
-
-    if (type === 'backward') {
-      historyIndex += 1;
-    } else {
-      historyIndex -= 1;
-    }
-
-    const historyQuery = history[historyIndex];
-
-    this.setState({
-      historyIndex,
-    });
-
-    this.mirror.setValue(historyQuery);
-  }
-
   render() {
     const {
-      featureCount, errorMessage, history, historyIndex,
+      bounds,
+      featureCount,
+      errorMessage,
+      geoJson,
+      geometryType,
+      history,
+      historyIndex,
+      rows,
+      tiles,
+      view,
     } = this.state;
 
     const noHistoryBack = historyIndex > history.length - 2;
@@ -174,7 +178,9 @@ class App extends React.Component {
         <div className="navbar navbar-inverse navbar-fixed-top" role="navigation">
           <div className="container-fluid">
             <div className="navbar-header">
-              <a className="navbar-brand" href="#">PostGIS Preview</a>
+              <a className="navbar-brand" href="/">
+                PostGIS Preview
+              </a>
             </div>
             <div className="btn-group navbar-right" role="group" aria-label="...">
               <button
@@ -197,7 +203,7 @@ class App extends React.Component {
         <div id="container">
           <div id="sidebar">
             <div className="col-md-12">
-              <Mirror
+              <Mirror // eslint-disable-line
                 ref={(ref) => {
                   this.mirror = ref;
                 }}
@@ -209,6 +215,7 @@ class App extends React.Component {
                 onClick={() => {
                   this.getHistory('backward');
                 }}
+                role="button"
               >
                 <span className="glyphicon glyphicon-chevron-left" aria-hidden="true" />
               </div>
@@ -219,6 +226,7 @@ class App extends React.Component {
                 onClick={() => {
                   this.getHistory('forward');
                 }}
+                role="button"
               >
                 <span className="glyphicon glyphicon-chevron-right" aria-hidden="true" />
               </div>
@@ -236,41 +244,35 @@ class App extends React.Component {
               </button>
 
               <div className="form-check" style={{ marginTop: '5px' }}>
-                <input
-                  id="experimentalCheck"
-                  className="form-check-input"
-                  type="checkbox"
-                  onChange={this.toggleMvt.bind(this)}
-                />
                 <label
                   className="form-check-label"
                   htmlFor="experimentalCheck"
                   style={{ marginLeft: '10px', userSelect: 'none', fontWeight: 200 }}
                 >
+                  <input
+                    id="experimentalCheck"
+                    className="form-check-input"
+                    type="checkbox"
+                    onChange={this.toggleMvt}
+                  />
                   Use MVT Tile Layers (For PostGIS 2.4+)
                 </label>
               </div>
-
               {notification}
-              <div id="download">
-                <h4>Download</h4>
-                <button id="geojson" className="btn btn-info pull-left">
-                  Geojson
-                </button>
-                <button id="csv" className="btn btn-info pull-left">
-                  CSV
-                </button>
-              </div>
             </div>
           </div>
-          <Map
-            tiles={this.state.tiles}
-            geoJson={this.state.geoJson}
-            bounds={this.state.bounds}
-            visible={this.state.view === 'map'}
-            geometryType={this.state.geometryType}
+          <Map // eslint-disable-line
+            tiles={tiles}
+            geoJson={geoJson}
+            bounds={bounds}
+            visible={view === 'map'}
+            geometryType={geometryType}
           />
-          <Table rows={this.state.rows} featureCount={this.state.featureCount} visible={this.state.view === 'table'} />
+          <Table // eslint-disable-line
+            rows={rows}
+            featureCount={featureCount}
+            visible={view === 'table'}
+          />
         </div>
       </div>
     );

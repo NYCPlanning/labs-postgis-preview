@@ -1,4 +1,4 @@
-class Mirror extends React.Component {
+class Mirror extends React.Component { // eslint-disable-line
   componentDidMount() {
     this.editor = CodeMirror.fromTextArea(document.getElementById('sqlPane'), {
       mode: 'text/x-pgsql',
@@ -24,10 +24,8 @@ class Mirror extends React.Component {
   }
 
   render() {
-    const { query } = this.props;
-
     return (
-      <textarea id="sqlPane" className="form-control" value="/* Type your SQL here */" readOnly></textarea>
-    )
+      <textarea id="sqlPane" className="form-control" value="/* Type your SQL here */" readOnly />
+    );
   }
 }
