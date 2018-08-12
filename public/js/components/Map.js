@@ -78,6 +78,10 @@ function removeLayers(map, ctx) {
   ctx.setState({ zoomedToBounds: false });
 }
 
+function getBeforeLayer(geometriesAboveLabels) {
+  return geometriesAboveLabels ? null : 'place_other';
+}
+
 class Map extends React.Component {
   constructor(props) {
     super(props);
@@ -86,13 +90,20 @@ class Map extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     const {
-      tiles: nextTiles,
-      geoJson: nextgeoJson,
-      geometryType: nextGeometryType,
+      tiles,
+      geoJson,
+      geometryType,
+      geometriesAboveLabels: nextGeometriesAboveLabels,
     } = nextProps;
 
-    if (nextTiles) this.addTileLayer(nextTiles, nextGeometryType);
-    if (nextgeoJson) this.addJsonLayer(nextgeoJson, nextGeometryType);
+    const { geometriesAboveLabels } = this.state;
+
+    if ((geometriesAboveLabels !== nextGeometriesAboveLabels) && (!!this.map.getLayer('postgis-preview'))) {
+      this.map.moveLayer('postgis-preview', getBeforeLayer(nextGeometriesAboveLabels));
+    } else {
+      if (tiles) this.addTileLayer(tiles, geometryType, geometriesAboveLabels);
+      if (geoJson) this.addJsonLayer(geoJson, geometryType, geometriesAboveLabels);
+    }
   }
 
   componentDidMount() {
@@ -117,10 +128,11 @@ class Map extends React.Component {
     }
   }
 
-  addJsonLayer(geoJson, geometryType) {
+  addJsonLayer(geoJson, geometryType, geometriesAboveLabels) {
     removeLayers(this.map, this);
+    const beforeLayer = geometriesAboveLabels ? '' : 'place_other';
     const layerConfig = getLayerConfig(geoJson, geometryType);
-    this.map.addLayer(layerConfig, 'highway_name_other');
+    this.map.addLayer(layerConfig, beforeLayer);
 
     const bounds = turf.bbox(geoJson);
 
@@ -130,10 +142,11 @@ class Map extends React.Component {
     this.setState({ zoomedToBounds: true });
   }
 
-  addTileLayer(tiles, geometryType) {
+  addTileLayer(tiles, geometryType, geometriesAboveLabels) {
+    const beforeLayer = geometriesAboveLabels ? '' : 'place_other';
     const layerConfig = getLayerConfig(tiles, geometryType);
     removeLayers(this.map, this);
-    this.map.addLayer(layerConfig, 'highway_name_other');
+    this.map.addLayer(layerConfig, BEFORE_LAYER);
 
     if (this.props.bounds) {
       this.map.fitBounds(this.props.bounds, {

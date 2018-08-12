@@ -17,6 +17,7 @@ class App extends React.Component {
       rows: null,
       view: 'map',
       geometryType: null,
+      geometriesAboveLabels: false,
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -60,7 +61,7 @@ class App extends React.Component {
           } else {
             const geoJson = json;
             const featureCount = geoJson.features.length;
-            
+
             // Get the geometry type. Make sure we only look at features with a geometry
             const geometryType = geoJson.features.filter(feature => {
               if (feature.geometry && feature.geometry.type) {
@@ -114,6 +115,14 @@ class App extends React.Component {
       this.setState({ useTiles: true, geoJson: null });
     } else {
       this.setState({ useTiles: false, tiles: null, bounds: null });
+    }
+  }
+
+  toggleAboveLabels(e) {
+    if (e.target.checked) {
+      this.setState({ geometriesAboveLabels: true });
+    } else {
+      this.setState({ geometriesAboveLabels: false });
     }
   }
 
@@ -251,6 +260,22 @@ class App extends React.Component {
                 </label>
               </div>
 
+              <div className="form-check" style={{ marginTop: '5px' }}>
+                <input
+                  id="above-labels-toggle"
+                  className="form-check-input"
+                  type="checkbox"
+                  onChange={this.toggleAboveLabels.bind(this)}
+                />
+                <label
+                  className="form-check-label"
+                  htmlFor="above-labels-toggle"
+                  style={{ marginLeft: '10px', userSelect: 'none', fontWeight: 200 }}
+                >
+                  Show results above map labels
+                </label>
+              </div>
+
               {notification}
               <div id="download">
                 <h4>Download</h4>
@@ -269,6 +294,7 @@ class App extends React.Component {
             bounds={this.state.bounds}
             visible={this.state.view === 'map'}
             geometryType={this.state.geometryType}
+            geometriesAboveLabels={this.state.geometriesAboveLabels}
           />
           <Table rows={this.state.rows} featureCount={this.state.featureCount} visible={this.state.view === 'table'} />
         </div>
