@@ -78,21 +78,10 @@ function removeLayers(map, ctx) {
   ctx.setState({ zoomedToBounds: false });
 }
 
-class Map extends React.Component {
+class Map extends React.Component { // eslint-disable-line
   constructor(props) {
     super(props);
     this.state = { zoomedToBounds: false };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const {
-      tiles: nextTiles,
-      geoJson: nextgeoJson,
-      geometryType: nextGeometryType,
-    } = nextProps;
-
-    if (nextTiles) this.addTileLayer(nextTiles, nextGeometryType);
-    if (nextgeoJson) this.addJsonLayer(nextgeoJson, nextGeometryType);
   }
 
   componentDidMount() {
@@ -108,13 +97,30 @@ class Map extends React.Component {
     window.map = this.map;
   }
 
+  componentWillReceiveProps(nextProps) {
+    const {
+      tiles: nextTiles,
+      geoJson: nextgeoJson,
+      geometryType: nextGeometryType,
+    } = nextProps;
+
+    if (nextTiles) this.addTileLayer(nextTiles, nextGeometryType);
+    if (nextgeoJson) this.addJsonLayer(nextgeoJson, nextGeometryType);
+  }
+
   componentDidUpdate() {
-    if (!this.state.zoomedToBounds && this.props.bounds && this.map) {
-      this.map.fitBounds(this.props.bounds, {
-        padding: 80,
-      });
-      this.setState({ zoomedToBounds: true });
+    const { zoomedToBounds } = this.state;
+    const { bounds } = this.props;
+    if (!zoomedToBounds && bounds && this.map) {
+      this.fitBounds(bounds);
     }
+  }
+
+  fitBounds(bounds) {
+    this.map.fitBounds(bounds, {
+      padding: 80,
+    });
+    this.setState({ zoomedToBounds: true });
   }
 
   addJsonLayer(geoJson, geometryType) {
@@ -124,28 +130,21 @@ class Map extends React.Component {
 
     const bounds = turf.bbox(geoJson);
 
-    this.map.fitBounds(bounds, {
-      padding: 80,
-    });
-    this.setState({ zoomedToBounds: true });
+    this.fitBounds(bounds);
   }
 
   addTileLayer(tiles, geometryType) {
+    const { bounds } = this.props;
     const layerConfig = getLayerConfig(tiles, geometryType);
     removeLayers(this.map, this);
     this.map.addLayer(layerConfig);
 
-    if (this.props.bounds) {
-      this.map.fitBounds(this.props.bounds, {
-        padding: 80,
-      });
-      this.setState({ zoomedToBounds: true });
-    }
+    if (bounds) this.fitBoounds(bounds);
   }
 
   render() {
     const { visible } = this.props;
     const display = visible ? '' : 'none';
-    return <div id="map" style={{ display }}/>;
+    return <div id="map" style={{ display }} />;
   }
 }

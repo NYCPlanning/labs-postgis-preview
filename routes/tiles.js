@@ -35,7 +35,7 @@ router.get('/initialize', async (req, res) => {
 
   let rows = await app.db.any(q)
     .catch((e) => {
-      console.error(e.message);
+      console.error(e.message); // eslint-disable-line
     });
 
   const wkbBuffer = Buffer.from(rows[0].geom, 'hex');

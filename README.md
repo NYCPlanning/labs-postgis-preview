@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/NYCPlanning/labs-postgis-preview/tree/develop.svg?style=svg)](https://circleci.com/gh/NYCPlanning/labs-postgis-preview/tree/develop)
+
 # PostGIS Preview
 
 A lightweight node api and frontend for quickly previewing PostGIS queries. _Pull Requests Welcomed!_ Take a look at the [open issues](https://github.com/chriswhong/postgis-preview/issues)
@@ -46,6 +48,10 @@ _Pull Requests Welcomed!_  Take a look at the [open issues](https://github.com/c
 ### Notes
 
 - PostGIS preview expects your geometry column to be called `geom`, and that it contains WGS84 geometries.
+
+### Tests
+
+`yarn test`
 
 #### Optional Feature Requirements
 
