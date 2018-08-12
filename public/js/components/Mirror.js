@@ -8,7 +8,7 @@ class Mirror extends React.Component { // eslint-disable-line
       matchBrackets: true,
       autofocus: true,
       lineWrapping: true,
-      theme: 'monokai',
+      theme: 'shadowfox',
     });
 
     this.editor.replaceRange('\n', { line: 2, ch: 0 }); // create newline for editing

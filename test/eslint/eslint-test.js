@@ -3,7 +3,7 @@ const { CLIEngine } = require('eslint');
 const { assert } = require('chai');
 
 const paths = glob.sync('./+(app|test|routes|public)/**/*.js', {
-  ignore: './public/js/codemirror-5.15.2/**/*.js',
+  ignore: './public/js/codemirror-5.39.2/**/*.js',
 });
 paths.push('./server.js');
 const engine = new CLIEngine({

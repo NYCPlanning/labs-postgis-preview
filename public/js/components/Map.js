@@ -29,9 +29,9 @@ function getLayerConfig(data, geometryType) {
       ...layerConfig,
       type: 'fill',
       paint: {
-        'fill-color': 'steelblue',
+        'fill-color': 'rgba(52, 161, 255, 1)',
         'fill-outline-color': 'white',
-        'fill-opacity': 0.7,
+        'fill-opacity': 0.6,
       },
     };
   }
@@ -41,7 +41,7 @@ function getLayerConfig(data, geometryType) {
       ...layerConfig,
       type: 'line',
       paint: {
-        'line-color': 'steelblue',
+        'line-color': 'rgba(52, 161, 255, 1)',
         'line-width': '5',
         'line-opacity': 0.7,
       },
@@ -53,11 +53,9 @@ function getLayerConfig(data, geometryType) {
       ...layerConfig,
       type: 'circle',
       paint: {
-        'circle-radius': 5,
-        'circle-color': 'steelblue',
-        'circle-opacity': 0.7,
-        'circle-stroke-width': 2,
-        'circle-stroke-color': '#FFFFFF',
+        'circle-radius': 2.5,
+        'circle-color': 'rgba(52, 161, 255, 1)',
+        'circle-opacity': 0.6,
       },
     };
   }
@@ -93,7 +91,7 @@ class Map extends React.Component { // eslint-disable-line
     this.map = new mapboxgl.Map({
       container: 'map',
       // style: '//raw.githubusercontent.com/NYCPlanning/labs-gl-style/master/data/style.json',
-      style: 'https://maps.tilehosting.com/styles/positron/style.json?key=2F8nWorAsHivJ6MEwNs6',
+      style: 'https://maps.tilehosting.com/styles/darkmatter/style.json?key=2F8nWorAsHivJ6MEwNs6',
       hash: true,
       zoom: 6.73,
       center: [-73.265, 40.847],
