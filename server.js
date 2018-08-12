@@ -44,4 +44,6 @@ app.listen(port);
 console.log(`Postgis Preview is listening on port ${port}...`); // eslint-disable-line
 
 // opens the url in the default browser
-opn(`http://localhost:${port}`);
+if (process.env.NODE_ENV !== 'development') {
+  opn(`http://localhost:${port}`);
+}

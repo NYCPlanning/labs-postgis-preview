@@ -78,9 +78,14 @@ function removeLayers(map, ctx) {
   ctx.setState({ zoomedToBounds: false });
 }
 
+function getBeforeLayer(geometriesAboveLabels) {
+  return geometriesAboveLabels ? null : 'place_other';
+}
+
 class Map extends React.Component { // eslint-disable-line
   constructor(props) {
     super(props);
+
     this.state = { zoomedToBounds: false };
   }
 
@@ -99,13 +104,19 @@ class Map extends React.Component { // eslint-disable-line
 
   componentWillReceiveProps(nextProps) {
     const {
-      tiles: nextTiles,
-      geoJson: nextgeoJson,
-      geometryType: nextGeometryType,
+      tiles,
+      geoJson,
+      geometryType,
+      geometriesAboveLabels: nextGeometriesAboveLabels,
     } = nextProps;
 
-    if (nextTiles) this.addTileLayer(nextTiles, nextGeometryType);
-    if (nextgeoJson) this.addJsonLayer(nextgeoJson, nextGeometryType);
+    const { geometriesAboveLabels } = this.props;
+    if ((geometriesAboveLabels !== nextGeometriesAboveLabels) && (!!this.map.getLayer('postgis-preview'))) {
+      this.map.moveLayer('postgis-preview', getBeforeLayer(nextGeometriesAboveLabels));
+    } else {
+      if (tiles) this.addTileLayer(tiles, geometryType, geometriesAboveLabels);
+      if (geoJson) this.addJsonLayer(geoJson, geometryType, geometriesAboveLabels);
+    }
   }
 
   componentDidUpdate() {
@@ -123,23 +134,23 @@ class Map extends React.Component { // eslint-disable-line
     this.setState({ zoomedToBounds: true });
   }
 
-  addJsonLayer(geoJson, geometryType) {
+  addJsonLayer(geoJson, geometryType, geometriesAboveLabels) {
     removeLayers(this.map, this);
     const layerConfig = getLayerConfig(geoJson, geometryType);
-    this.map.addLayer(layerConfig);
+    this.map.addLayer(layerConfig, getBeforeLayer(geometriesAboveLabels));
 
     const bounds = turf.bbox(geoJson);
 
     this.fitBounds(bounds);
   }
 
-  addTileLayer(tiles, geometryType) {
+  addTileLayer(tiles, geometryType, geometriesAboveLabels) {
     const { bounds } = this.props;
     const layerConfig = getLayerConfig(tiles, geometryType);
     removeLayers(this.map, this);
-    this.map.addLayer(layerConfig);
+    this.map.addLayer(layerConfig, getBeforeLayer(geometriesAboveLabels));
 
-    if (bounds) this.fitBoounds(bounds);
+    if (bounds) this.fitBounds(bounds);
   }
 
   render() {

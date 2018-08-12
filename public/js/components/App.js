@@ -17,9 +17,11 @@ class App extends React.Component {
       rows: null,
       view: 'map',
       geometryType: null,
+      geometriesAboveLabels: false,
     };
 
     this.toggleMvt = this.toggleMvt.bind(this);
+    this.toggleAboveLabels = this.toggleAboveLabels.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleViewToggle = this.handleViewToggle.bind(this);
   }
@@ -48,18 +50,6 @@ class App extends React.Component {
     });
 
     this.mirror.setValue(historyQuery);
-  }
-
-  toggleMvt(e) {
-    if (e.target.checked) {
-      this.setState({ useTiles: true, geoJson: null });
-    } else {
-      this.setState({ useTiles: false, tiles: null, bounds: null });
-    }
-  }
-
-  handleViewToggle(view) {
-    this.setState({ view });
   }
 
   handleSubmit() {
@@ -135,6 +125,26 @@ class App extends React.Component {
     this.setState({ history });
   }
 
+  toggleMvt(e) {
+    if (e.target.checked) {
+      this.setState({ useTiles: true, geoJson: null });
+    } else {
+      this.setState({ useTiles: false, tiles: null, bounds: null });
+    }
+  }
+
+  toggleAboveLabels(e) {
+    if (e.target.checked) {
+      this.setState({ geometriesAboveLabels: true });
+    } else {
+      this.setState({ geometriesAboveLabels: false });
+    }
+  }
+
+  handleViewToggle(view) {
+    this.setState({ view });
+  }
+
   render() {
     const {
       bounds,
@@ -147,6 +157,7 @@ class App extends React.Component {
       rows,
       tiles,
       view,
+      geometriesAboveLabels,
     } = this.state;
 
     const noHistoryBack = historyIndex > history.length - 2;
@@ -258,15 +269,34 @@ class App extends React.Component {
                   Use MVT Tile Layers (For PostGIS 2.4+)
                 </label>
               </div>
+              <div className="form-check" style={{ marginTop: '5px' }}>
+                <label
+                  className="form-check-label"
+                  htmlFor="above-labels-toggle"
+                  style={{ marginLeft: '10px', userSelect: 'none', fontWeight: 200 }}
+                >
+                  <input
+                    id="above-labels-toggle"
+                    className="form-check-input"
+                    type="checkbox"
+                    onChange={this.toggleAboveLabels}
+                  />
+                  Show results above map labels
+                </label>
+              </div>
+
               {notification}
             </div>
           </div>
+
           <Map // eslint-disable-line
             tiles={tiles}
             geoJson={geoJson}
             bounds={bounds}
             visible={view === 'map'}
             geometryType={geometryType}
+            geometriesAboveLabels={geometriesAboveLabels}
+
           />
           <Table // eslint-disable-line
             rows={rows}
