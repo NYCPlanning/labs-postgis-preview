@@ -1,11 +1,14 @@
 {
   "parser": "babel-eslint",
-  "extends": "airbnb-base",
+  "extends": "airbnb",
   "rules": {
     "max-len": [0, 120, 2, { "ignoreComments": true }],
     "no-param-reassign": [0],
     "radix": [0],
-    "camelcase": [0]
+    "camelcase": [0],
+    "react/jsx-filename-extension": [0],
+    "jsx-a11y/click-events-have-key-events": [0],
+    "react/prop-types": [0]
   },
   "env": {
     "browser": true,
@@ -17,7 +20,6 @@
     "$": true,
     "CodeMirror": true,
     "editor": true,
-    "omnivore": true,
     "React": true,
     "ReactDOM": true,
     "mapboxgl": true,

@@ -82,10 +82,23 @@ function getBeforeLayer(geometriesAboveLabels) {
   return geometriesAboveLabels ? null : 'place_other';
 }
 
-class Map extends React.Component {
+class Map extends React.Component { // eslint-disable-line
   constructor(props) {
     super(props);
     this.state = { zoomedToBounds: false };
+  }
+
+  componentDidMount() {
+    this.map = new mapboxgl.Map({
+      container: 'map',
+      // style: '//raw.githubusercontent.com/NYCPlanning/labs-gl-style/master/data/style.json',
+      style: 'https://maps.tilehosting.com/styles/positron/style.json?key=2F8nWorAsHivJ6MEwNs6',
+      hash: true,
+      zoom: 6.73,
+      center: [-73.265, 40.847],
+    });
+
+    window.map = this.map;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -106,59 +119,43 @@ class Map extends React.Component {
     }
   }
 
-  componentDidMount() {
-    this.map = new mapboxgl.Map({
-      container: 'map',
-      // style: '//raw.githubusercontent.com/NYCPlanning/labs-gl-style/master/data/style.json',
-      style: 'https://maps.tilehosting.com/styles/positron/style.json?key=2F8nWorAsHivJ6MEwNs6',
-      hash: true,
-      zoom: 6.73,
-      center: [-73.265, 40.847],
-    });
-
-    window.map = this.map;
-  }
-
   componentDidUpdate() {
-    if (!this.state.zoomedToBounds && this.props.bounds && this.map) {
-      this.map.fitBounds(this.props.bounds, {
-        padding: 80,
-      });
-      this.setState({ zoomedToBounds: true });
+    const { zoomedToBounds } = this.state;
+    const { bounds } = this.props;
+    if (!zoomedToBounds && bounds && this.map) {
+      this.fitBounds(bounds);
     }
   }
 
-  addJsonLayer(geoJson, geometryType, geometriesAboveLabels) {
-    removeLayers(this.map, this);
-    const beforeLayer = geometriesAboveLabels ? '' : 'place_other';
-    const layerConfig = getLayerConfig(geoJson, geometryType);
-    this.map.addLayer(layerConfig, beforeLayer);
-
-    const bounds = turf.bbox(geoJson);
-
+  fitBounds(bounds) {
     this.map.fitBounds(bounds, {
       padding: 80,
     });
     this.setState({ zoomedToBounds: true });
   }
 
+  addJsonLayer(geoJson, geometryType, geometriesAboveLabels) {
+    removeLayers(this.map, this);
+    const layerConfig = getLayerConfig(geoJson, geometryType);
+    this.map.addLayer(layerConfig, getBeforeLayer(geometriesAboveLabels));
+
+    const bounds = turf.bbox(geoJson);
+
+    this.fitBounds(bounds);
+  }
+
   addTileLayer(tiles, geometryType, geometriesAboveLabels) {
-    const beforeLayer = geometriesAboveLabels ? '' : 'place_other';
+    const { bounds } = this.props;
     const layerConfig = getLayerConfig(tiles, geometryType);
     removeLayers(this.map, this);
-    this.map.addLayer(layerConfig, BEFORE_LAYER);
+    this.map.addLayer(layerConfig, getBeforeLayer(geometriesAboveLabels));
 
-    if (this.props.bounds) {
-      this.map.fitBounds(this.props.bounds, {
-        padding: 80,
-      });
-      this.setState({ zoomedToBounds: true });
-    }
+    if (bounds) this.fitBounds(bounds);
   }
 
   render() {
     const { visible } = this.props;
     const display = visible ? '' : 'none';
-    return <div id="map" style={{ display }}/>;
+    return <div id="map" style={{ display }} />;
   }
 }
