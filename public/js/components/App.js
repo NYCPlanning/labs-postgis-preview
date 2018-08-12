@@ -197,14 +197,14 @@ class App extends React.Component {
               <button
                 type="button"
                 onClick={() => { this.handleViewToggle('map'); }}
-                className="btn btn-info navbar-btn active"
+                className={`btn btn-info navbar-btn ${view === 'map' ? 'active' : ''}`}
               >
                 Map
               </button>
               <button
                 type="button"
                 onClick={() => { this.handleViewToggle('table'); }}
-                className="btn btn-info navbar-btn"
+                className={`btn btn-info navbar-btn ${view === 'table' ? 'active' : ''}`}
               >
                 Table
               </button>
