@@ -111,14 +111,9 @@ class Map extends React.Component { // eslint-disable-line
     } = nextProps;
 
     const { geometriesAboveLabels } = this.props;
-    console.log('geometriesAboveLabels', geometriesAboveLabels, nextGeometriesAboveLabels)
-    console.log((geometriesAboveLabels !== nextGeometriesAboveLabels))
-    console.log((!!this.map.getLayer('postgis-preview')))
     if ((geometriesAboveLabels !== nextGeometriesAboveLabels) && (!!this.map.getLayer('postgis-preview'))) {
-      console.log('moving layer')
       this.map.moveLayer('postgis-preview', getBeforeLayer(nextGeometriesAboveLabels));
     } else {
-      console.log('adding layers')
       if (tiles) this.addTileLayer(tiles, geometryType, geometriesAboveLabels);
       if (geoJson) this.addJsonLayer(geoJson, geometryType, geometriesAboveLabels);
     }
