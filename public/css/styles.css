@@ -2,6 +2,8 @@ html, body, #root, #container, .react-root {
   height: 100%;
   width: 100%;
   overflow: hidden;
+  background: #1b1f24;
+  color: #8d8d8d;
 }
 body {
   padding-top: 50px;
@@ -9,7 +11,6 @@ body {
 #map, #table {
   width: auto;
   height: 100%;
-  box-shadow: 0 0 10px rgba(0,0,0,0.55);
   position: relative;
   display: block;
 }
@@ -21,17 +22,21 @@ body {
   height: 100%;
   max-width: 100%;
   float: right;
-  -webkit-transition: all 0.25s ease-out;
-  -moz-transition: all 0.25s ease-out;
-  transition: all 0.25s ease-out;
+  border-left: 5px solid #26282d;
 }
+
+.CodeMirror {
+  border-bottom: 1px solid #36383d;
+}
+
 .navbar .navbar-brand {
   font-weight: bold;
   font-size: 25px;
   color: #FFFFFF;
 }
 .navbar {
-  background-image: linear-gradient(to bottom, #2b6988 0%, #1f4b61 100%);
+  background-color: #1c1f24;
+  max-height: 40px;
 }
 .navbar-inverse .navbar-nav>li>a {
   color: #fff;
@@ -110,4 +115,31 @@ body {
 .leaflet-popup-content {
   max-height: 50vh;
   overflow-y: scroll;
+}
+
+/* Checkboxes */
+input[type=checkbox] {
+  margin-right: 8px;margin-right: 8px;
+}
+
+/* Buttons */
+.btn-info {
+  color: #8e8e8e;
+  background-color: #36383e;
+  border: none;
+}
+
+.btn-info.active, .btn-info.focus, .btn-info:active, .btn-info:focus, .btn-info:hover, .open>.dropdown-toggle.btn-info {
+  color: #f0f0f0;
+  background-color: #52565f;
+  border: none;
+}
+
+.btn-info[disabled] {
+    background-color: #7e7e7e;
+}
+
+/* Override CodeMirror Style */
+.cm-s-shadowfox.CodeMirror {
+    background: #1b1f24;
 }
