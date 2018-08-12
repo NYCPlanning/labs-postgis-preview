@@ -4,6 +4,7 @@
 // dependencies
 const express = require('express');
 const NodeCache = require('node-cache');
+const opn = require('opn');
 
 require('dotenv').config();
 
@@ -41,3 +42,6 @@ app.use('/tiles', require('./routes/tiles'));
 // start the server
 app.listen(port);
 console.log(`Postgis Preview is listening on port ${port}...`); // eslint-disable-line
+
+// opens the url in the default browser
+opn(`http://localhost:${port}`);
