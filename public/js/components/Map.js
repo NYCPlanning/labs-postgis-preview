@@ -98,7 +98,8 @@ class Map extends React.Component {
   componentDidMount() {
     this.map = new mapboxgl.Map({
       container: 'map',
-      style: '//raw.githubusercontent.com/NYCPlanning/labs-gl-style/master/data/style.json',
+      // style: '//raw.githubusercontent.com/NYCPlanning/labs-gl-style/master/data/style.json',
+      style: 'https://maps.tilehosting.com/styles/positron/style.json?key=2F8nWorAsHivJ6MEwNs6',
       hash: true,
       zoom: 6.73,
       center: [-73.265, 40.847],
