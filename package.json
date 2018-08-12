@@ -32,7 +32,7 @@
   "scripts": {
     "test": "NODE_ENV=test node ./node_modules/mocha/bin/mocha ./test/**/*.js --exit",
     "start": "node server.js",
-    "devstart": "nodemon server.js"
+    "devstart": "NODE_ENV=development nodemon server.js"
   },
   "author": "",
   "license": "ISC"
