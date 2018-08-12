@@ -47,6 +47,10 @@ _Pull Requests Welcomed!_  Take a look at the [open issues](https://github.com/c
 
 - PostGIS preview expects your geometry column to be called `geom`, and that it contains WGS84 geometries.
 
+### Tests
+
+`yarn test`
+
 #### Optional Feature Requirements
 
 At some time in the near future, this app will allow the option to serve mvt locally, instead of geojson. However, for that to work, you will need the following:
