@@ -1,4 +1,5 @@
 [![CircleCI](https://circleci.com/gh/NYCPlanning/labs-postgis-preview/tree/develop.svg?style=svg)](https://circleci.com/gh/NYCPlanning/labs-postgis-preview/tree/develop)
+[![pullreminders](https://pullreminders.com/badge.svg)](https://pullreminders.com?ref=badge)
 
 # PostGIS Preview
 
