@@ -42,7 +42,7 @@ function getLayerConfig(data, geometryType) {
       type: 'line',
       paint: {
         'line-color': 'rgba(52, 161, 255, 1)',
-        'line-width': '5',
+        'line-width': 5,
         'line-opacity': 0.7,
       },
     };
